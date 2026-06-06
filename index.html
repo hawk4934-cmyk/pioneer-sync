@@ -411,7 +411,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot, query, orderBy }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
@@ -466,7 +466,15 @@ function countResearchPeople(people){
 window.signInWithGoogle = async function(){
   try{
     const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    // 사파리/모바일은 리다이렉트 방식 사용
+    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+    const isInstagram = navigator.userAgent.includes('Instagram');
+    const isKakao = navigator.userAgent.includes('KAKAOTALK');
+    if(isSafari || isInstagram || isKakao){
+      await signInWithRedirect(auth, provider);
+    } else {
+      await signInWithPopup(auth, provider);
+    }
   }catch(e){alert('로그인 실패: '+e.message)}
 };
 
@@ -476,6 +484,9 @@ window.showUserMenu = function(){
     signOut(auth);
   }
 };
+
+// 리다이렉트 후 결과 처리
+getRedirectResult(auth).catch(e=>console.log('redirect:',e));
 
 onAuthStateChanged(auth, user=>{
   currentUser = user;
