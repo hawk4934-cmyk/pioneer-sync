@@ -466,16 +466,23 @@ function countResearchPeople(people){
 window.signInWithGoogle = async function(){
   try{
     const provider = new GoogleAuthProvider();
-    // 사파리/모바일은 리다이렉트 방식 사용
-    const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-    const isInstagram = navigator.userAgent.includes('Instagram');
-    const isKakao = navigator.userAgent.includes('KAKAOTALK');
-    if(isSafari || isInstagram || isKakao){
+    const ua = navigator.userAgent;
+    // iOS(아이폰/아이패드), 사파리, 카카오톡, 인스타그램은 리다이렉트
+    const isIOS = /iPad|iPhone|iPod/.test(ua);
+    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
+    const isInApp = ua.includes('KAKAOTALK') || ua.includes('Instagram') || ua.includes('NAVER');
+    if(isIOS || isSafari || isInApp){
       await signInWithRedirect(auth, provider);
     } else {
       await signInWithPopup(auth, provider);
     }
-  }catch(e){alert('로그인 실패: '+e.message)}
+  }catch(e){
+    // 팝업 실패 시 리다이렉트로 재시도
+    try{
+      const provider = new GoogleAuthProvider();
+      await signInWithRedirect(auth, provider);
+    }catch(e2){alert('로그인 실패: '+e2.message)}
+  }
 };
 
 window.showUserMenu = function(){
@@ -646,20 +653,28 @@ function renderDashboard(){
 }
 
 // ── 보고서 공유 ──
+function countResearchInMonth(monthKey){
+  // 해당 월에 방문 기록이 있는 연구 관심자 수 (중복 제거)
+  const researchPeople = cachedPeople.filter(p=>p.type==='연구');
+  const set = new Set();
+  researchPeople.forEach(p=>{
+    (p.visits||[]).forEach(v=>{
+      if(v.date && v.date.slice(0,7)===monthKey) set.add(p.id);
+    });
+  });
+  return set.size;
+}
 function buildReportText(monthKey){
   const ms=sumMonth(cachedRecs,monthKey);
   const [y,m]=monthKey.split('-');
-  const researchCount=countResearchPeople(cachedPeople);
-  const diff=ms.total-MONTHLY_MIN;
-  const diffStr=diff>=0?'잉여 +'+fmtTime(diff):'부족 '+fmtTime(-diff);
+  const researchCount=countResearchInMonth(monthKey);
   return `📋 ${y}년 ${parseInt(m)}월 봉사 보고\n`+
     `━━━━━━━━━━━━━━\n`+
     `⏱ 총 봉사시간: ${fmtTime(ms.total)}\n`+
     `  • 봉사: ${fmtTime(ms.service)}\n`+
     (ms.ldc?`  • LDC: ${fmtTime(ms.ldc)}\n`:'')+
     (ms.edu?`  • 학교: ${fmtTime(ms.edu)}\n`:'')+
-    `📚 연구: ${researchCount}건\n`+
-    `📊 목표대비: ${diffStr}\n`+
+    (researchCount?`📚 연구: ${researchCount}건\n`:'')+
     `━━━━━━━━━━━━━━`;
 }
 window.shareMonthReport=function(){
@@ -821,7 +836,7 @@ window.openMonthPopup=function(key){
   const [y,m]=key.split('-');
   document.getElementById('popup-month-title').textContent=y+'년 '+parseInt(m)+'월 상세';
   const ms=sumMonth(cachedRecs,key);
-  const researchCount=countResearchPeople(cachedPeople);
+  const researchCount=countResearchInMonth(key);
   const diff=ms.total-MONTHLY_MIN;
   const diffStr=diff>=0?`<span class="green">+${fmtTime(diff)} 잉여</span>`:`<span class="red">${fmtTime(-diff)} 부족</span>`;
   document.getElementById('popup-month-content').innerHTML=`
@@ -830,7 +845,7 @@ window.openMonthPopup=function(key){
       <div class="metric"><div class="label">봉사</div><div class="val">${fmtTime(ms.service)}</div></div>
       <div class="metric"><div class="label">LDC</div><div class="val">${fmtTime(ms.ldc)}</div></div>
       <div class="metric"><div class="label">학교</div><div class="val">${fmtTime(ms.edu)}</div></div>
-      <div class="metric"><div class="label">연구</div><div class="val">${researchCount}건</div></div>
+      ${researchCount?`<div class="metric"><div class="label">연구</div><div class="val">${researchCount}건</div></div>`:''}
       <div class="metric"><div class="label">목표대비</div><div class="val" style="font-size:16px;">${diffStr}</div></div>
     </div>`;
   document.getElementById('month-popup').classList.add('active');
