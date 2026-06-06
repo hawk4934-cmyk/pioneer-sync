@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="봉사기록">
+<meta name="theme-color" content="#ffffff">
+<title>파이오니아 봉사기록</title>
+<style>
+:root {
+  --primary:#1a1a1a;--bg:#fff;--bg2:#f5f5f5;--bg3:#efefef;
+  --border:rgba(0,0,0,.12);--border2:rgba(0,0,0,.22);
+  --text1:#1a1a1a;--text2:#666;--text3:#999;
+  --green:#1D9E75;--green-bg:#e1f5ee;--green-text:#0F6E56;
+  --red:#D85A30;--red-bg:#FAECE7;--red-text:#993C1D;
+  --blue:#185FA5;--blue-bg:#E6F1FB;
+  --purple:#534AB7;--purple-bg:#EEEDFE;
+  --pink:#993556;--pink-bg:#FBEAF0;
+  --nav-h:60px;--safe-b:env(safe-area-inset-bottom,0px);
+}
+@media(prefers-color-scheme:dark){:root{
+  --primary:#f0f0f0;--bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+  --border:rgba(255,255,255,.12);--border2:rgba(255,255,255,.22);
+  --text1:#f0f0f0;--text2:#aaa;--text3:#666;
+  --green:#30d158;--green-bg:#0a3a24;--green-text:#30d158;
+  --red:#ff6b47;--red-bg:#3a1a0a;--red-text:#ff6b47;
+  --blue:#5e9fe0;--blue-bg:#0a2040;
+  --purple:#9b94e8;--purple-bg:#1a1840;
+  --pink:#d96fa0;--pink-bg:#3a1030;
+}}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple-system,'Malgun Gothic',sans-serif;overflow:hidden}
+#app{height:100%;display:flex;flex-direction:column}
+
+/* 로그인 화면 */
+#login-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:32px}
+#login-screen.hidden{display:none}
+.login-logo{width:80px;height:80px;background:var(--green);border-radius:20px;display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:24px}
+.login-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.login-sub{font-size:14px;color:var(--text2);margin-bottom:40px;text-align:center}
+.btn-google{display:flex;align-items:center;gap:12px;padding:14px 24px;border:1.5px solid var(--border2);border-radius:12px;background:var(--bg);cursor:pointer;font-size:15px;font-weight:500;color:var(--text1);font-family:inherit;width:100%;justify-content:center;max-width:320px}
+.btn-google:active{background:var(--bg2)}
+.btn-google img{width:22px;height:22px}
+.login-info{font-size:12px;color:var(--text3);margin-top:24px;text-align:center;line-height:1.6}
+
+/* 앱 레이아웃 */
+.header{padding:14px 16px 10px;border-bottom:.5px solid var(--border);flex-shrink:0}
+.header-top{display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:17px;font-weight:600}
+.header p{font-size:12px;color:var(--text2);margin-top:2px}
+.user-btn{display:flex;align-items:center;gap:6px;background:none;border:.5px solid var(--border2);border-radius:20px;padding:5px 10px;cursor:pointer;font-size:12px;color:var(--text2);font-family:inherit}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--green);color:white;font-size:11px;font-weight:600;display:flex;align-items:center;justify-content:center}
+.content{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-bottom:calc(var(--nav-h) + var(--safe-b) + 10px)}
+.nav{height:var(--nav-h);border-top:.5px solid var(--border);display:flex;flex-shrink:0;padding-bottom:var(--safe-b);background:var(--bg)}
+.nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:10px;border:none;background:none;cursor:pointer;color:var(--text3);padding:0}
+.nav button.active{color:var(--primary)}
+.nav button svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.page{display:none;padding:14px 16px}
+.page.active{display:block}
+.detail-page{display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch;z-index:10;padding:14px 16px calc(20px + var(--safe-b))}
+.detail-page.active{display:block}
+.sec-title{font-size:13px;font-weight:600;color:var(--text1);margin:16px 0 10px;display:flex;justify-content:space-between;align-items:center}
+.sec-title:first-child{margin-top:0}
+.metric-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:14px}
+.metric{background:var(--bg2);border-radius:12px;padding:12px;cursor:default}
+.metric.clickable{cursor:pointer}
+.metric.clickable:active{background:var(--bg3)}
+.metric .label{font-size:11px;color:var(--text2);margin-bottom:4px}
+.metric .val{font-size:22px;font-weight:600;line-height:1}
+.metric .sub{font-size:11px;color:var(--text2);margin-top:4px}
+.metric.full{grid-column:1/-1}
+.prog{height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;margin-top:8px}
+.prog-fill{height:100%;background:var(--green);border-radius:4px;transition:width .4s}
+.card{background:var(--bg);border:.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
+.form-row{margin-bottom:13px}
+.form-row label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:10px 12px;font-size:15px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;appearance:none;-webkit-appearance:none}
+.form-row textarea{resize:none;height:80px;line-height:1.5}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn-primary{width:100%;padding:14px;background:var(--primary);color:var(--bg);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
+.btn-sm{padding:6px 12px;font-size:12px;border:.5px solid var(--border2);border-radius:8px;background:none;cursor:pointer;color:var(--text1);font-family:inherit;display:flex;align-items:center;gap:4px}
+.btn-icon{background:none;border:none;cursor:pointer;color:var(--text3);padding:6px;display:flex;align-items:center}
+.btn-icon svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:6px;font-weight:500}
+.b-ldc{background:var(--blue-bg);color:var(--blue)}
+.b-edu{background:var(--green-bg);color:var(--green-text)}
+.b-visit{background:var(--red-bg);color:var(--red-text)}
+.b-research{background:var(--purple-bg);color:var(--purple)}
+.b-m{background:var(--blue-bg);color:var(--blue)}
+.b-f{background:var(--pink-bg);color:var(--pink)}
+.empty{text-align:center;padding:36px 0;color:var(--text3);font-size:14px}
+.person-card{background:var(--bg);border:.5px solid var(--border);border-radius:14px;padding:13px;margin-bottom:9px;cursor:pointer;display:flex;align-items:center;gap:12px}
+.person-card:active{background:var(--bg2)}
+.avatar{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;flex-shrink:0}
+.avatar.m{background:var(--blue-bg);color:var(--blue)}
+.avatar.f{background:var(--pink-bg);color:var(--pink)}
+.avatar.n{background:var(--bg3);color:var(--text2)}
+.search-bar{width:100%;padding:10px 12px;font-size:14px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;margin-bottom:10px}
+.filter-row{display:flex;gap:6px;margin-bottom:10px;overflow-x:auto;padding-bottom:2px}
+.filter-btn{padding:5px 12px;font-size:12px;border:.5px solid var(--border2);border-radius:20px;background:none;cursor:pointer;color:var(--text2);white-space:nowrap;font-family:inherit;flex-shrink:0}
+.filter-btn.on{background:var(--primary);color:var(--bg);border-color:var(--primary)}
+.sort-sel{font-size:12px;padding:5px 10px;border:.5px solid var(--border2);border-radius:8px;background:var(--bg2);color:var(--text1);font-family:inherit;-webkit-appearance:none}
+.back-btn{display:flex;align-items:center;gap:4px;background:none;border:none;cursor:pointer;color:var(--text1);font-size:15px;font-family:inherit;padding:0}
+.back-btn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.hist-item{padding:12px 0;border-bottom:.5px solid var(--border)}
+.hist-item:last-child{border-bottom:none}
+.yearly-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:.5px solid var(--border);cursor:pointer}
+.yearly-row:active{background:var(--bg2)}
+.yearly-row:last-child{border-bottom:none}
+.detail-row{display:flex;gap:8px;padding:7px 0;border-bottom:.5px solid var(--border);font-size:13px}
+.detail-row:last-child{border-bottom:none}
+.detail-row .dl{color:var(--text2);min-width:56px;flex-shrink:0}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.sync-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--green-bg);color:var(--green-text);margin-left:6px}
+.offline-badge{font-size:10px;padding:2px 6px;border-radius:4px;background:var(--red-bg);color:var(--red-text);margin-left:6px}
+
+/* 달력 */
+.cal-wrap{background:var(--bg);border:.5px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:14px}
+.cal-header{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:.5px solid var(--border)}
+.cal-header span{font-size:15px;font-weight:600}
+.cal-nav{background:none;border:none;cursor:pointer;color:var(--text1);padding:4px 10px;font-size:18px;border-radius:8px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-dow{text-align:center;font-size:11px;color:var(--text2);padding:8px 0}
+.cal-day{text-align:center;padding:7px 2px;font-size:13px;cursor:pointer;border-radius:8px;margin:2px;position:relative;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.cal-day.other{color:var(--text3)}
+.cal-day.today{font-weight:700;color:var(--green)}
+.cal-day.selected{background:var(--primary)!important;color:var(--bg)!important;border-radius:50%;width:32px;height:32px;margin:3px auto;padding:0}
+.cal-day.has-rec::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);display:block}
+.cal-day.selected.has-rec::after{background:var(--bg)}
+.cal-day.sun{color:var(--red)}
+.cal-day.sat{color:var(--blue)}
+
+/* 시간 입력 */
+.time-input{display:flex;align-items:center;gap:6px}
+.time-input select{flex:1;padding:10px 8px;font-size:15px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;-webkit-appearance:none;text-align:center}
+.time-sep{font-size:16px;font-weight:600;color:var(--text2);flex-shrink:0}
+
+/* 팝업 */
+.popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:flex-end}
+.popup-overlay.active{display:flex}
+.popup{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + var(--safe-b));width:100%;max-height:80vh;overflow-y:auto}
+.popup-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
+
+/* 공유 버튼 */
+.btn-share{display:flex;align-items:center;gap:8px;width:100%;padding:12px 14px;background:var(--green-bg);color:var(--green-text);border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:10px;justify-content:center}
+
+/* 로딩 */
+.loading{display:flex;align-items:center;justify-content:center;padding:40px;color:var(--text3);font-size:14px}
+</style>
+</head>
+<body>
+
+<!-- 로그인 화면 -->
+<div id="login-screen">
+  <div class="login-logo">📋</div>
+  <div class="login-title">파이오니아 봉사기록</div>
+  <div class="login-sub">구글 계정으로 로그인하면<br>모든 기기에서 데이터가 동기화됩니다</div>
+  <button class="btn-google" onclick="signInWithGoogle()">
+    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google">
+    Google 계정으로 로그인
+  </button>
+  <div class="login-info">로그인 시 봉사 기록 데이터가<br>안전하게 구글 서버에 저장됩니다</div>
+</div>
+
+<div id="app">
+  <div class="header">
+    <div class="header-top">
+      <h1>파이오니아 봉사기록</h1>
+      <button class="user-btn" onclick="showUserMenu()">
+        <div class="user-avatar" id="user-avatar">?</div>
+        <span id="user-name">로그인</span>
+      </button>
+    </div>
+    <p id="header-period"></p>
+  </div>
+  <div class="content" id="main-content">
+
+    <!-- 홈 -->
+    <div id="page-dashboard" class="page active">
+      <div class="sec-title">당월 현황</div>
+      <div class="metric-grid">
+        <div class="metric full">
+          <div class="label">당월 총 봉사시간 (목표 50시간)</div>
+          <div class="val" id="d-total">0시간</div>
+          <div class="prog"><div class="prog-fill" id="d-bar" style="width:0%"></div></div>
+          <div class="sub" id="d-remain"></div>
+        </div>
+        <div class="metric"><div class="label">봉사시간</div><div class="val" id="d-service">0h</div></div>
+        <div class="metric"><div class="label">LDC 시간</div><div class="val" id="d-ldc">0h</div></div>
+        <div class="metric"><div class="label">학교(교육)</div><div class="val" id="d-edu">0h</div></div>
+        <div class="metric"><div class="label">연구 중인 관심자</div><div class="val" id="d-study">0</div><div class="sub">명 (중복제외)</div></div>
+        <div class="metric full">
+          <div class="label">이달 부족/잉여</div>
+          <div class="val" id="d-diff">-</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <button class="btn-share" onclick="shareMonthReport()" style="flex:1;">
+          <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          당월 보고서 공유
+        </button>
+      </div>
+      <div class="sec-title">봉사연도 누계 (9월~8월)</div>
+      <div class="metric-grid">
+        <div class="metric"><div class="label">연누계 총시간</div><div class="val" id="d-yearly">0h</div></div>
+        <div class="metric"><div class="label">연 부족/잉여</div><div class="val" id="d-yearly-diff">-</div></div>
+      </div>
+      <div class="sec-title">관심자 현황</div>
+      <div class="metric-grid">
+        <div class="metric"><div class="label">전체 관심자</div><div class="val" id="d-p-total">0</div><div class="sub">명</div></div>
+        <div class="metric"><div class="label">연구 중</div><div class="val" id="d-p-research">0</div><div class="sub">명</div></div>
+      </div>
+    </div>
+
+    <!-- 기록 추가 -->
+    <div id="page-add" class="page">
+      <div class="sec-title">봉사 기록 추가</div>
+      <div class="cal-wrap">
+        <div class="cal-header">
+          <button class="cal-nav" onclick="calMove(-1)">‹</button>
+          <span id="cal-title"></span>
+          <button class="cal-nav" onclick="calMove(1)">›</button>
+        </div>
+        <div class="cal-grid" id="cal-dow-row"></div>
+        <div class="cal-grid" id="cal-body"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+        <span style="font-size:13px;color:var(--text2);">선택 날짜:</span>
+        <span id="selected-date-label" style="font-size:14px;font-weight:600;"></span>
+      </div>
+      <div class="card">
+        <div class="form-row">
+          <label>봉사시간</label>
+          <div class="time-input">
+            <select id="f-service-h"></select><span class="time-sep">시간</span>
+            <select id="f-service-m"></select><span class="time-sep">분</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <label>LDC 시간</label>
+          <div class="time-input">
+            <select id="f-ldc-h"></select><span class="time-sep">시간</span>
+            <select id="f-ldc-m"></select><span class="time-sep">분</span>
+          </div>
+        </div>
+        <div class="form-row"><label>LDC 메모</label><input type="text" id="f-ldc-memo" placeholder="LDC 내용 메모"></div>
+        <div class="form-row">
+          <label>학교(교육) 시간</label>
+          <div class="time-input">
+            <select id="f-edu-h"></select><span class="time-sep">시간</span>
+            <select id="f-edu-m"></select><span class="time-sep">분</span>
+          </div>
+        </div>
+        <div class="form-row"><label>교육 메모</label><input type="text" id="f-edu-memo" placeholder="교육 메모"></div>
+        <div class="form-row"><label>메모</label><textarea id="f-memo" placeholder="기타 메모..."></textarea></div>
+        <button class="btn-primary" onclick="addRecord()">저장</button>
+      </div>
+    </div>
+
+    <!-- 기록 내역 -->
+    <div id="page-records" class="page">
+      <div class="sec-title">
+        <span>월별 기록</span>
+        <select id="month-select" class="sort-sel" onchange="renderRecords()"></select>
+      </div>
+      <div id="month-summary" style="display:none;background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+        <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">월 합계</div>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;">
+          <div><span style="font-size:11px;color:var(--text2);">총시간</span><div id="ms-total" style="font-size:16px;font-weight:700;"></div></div>
+          <div><span style="font-size:11px;color:var(--text2);">봉사</span><div id="ms-service" style="font-size:16px;font-weight:700;"></div></div>
+          <div><span style="font-size:11px;color:var(--text2);">LDC</span><div id="ms-ldc" style="font-size:15px;font-weight:600;"></div></div>
+          <div><span style="font-size:11px;color:var(--text2);">학교</span><div id="ms-edu" style="font-size:15px;font-weight:600;"></div></div>
+          <div><span style="font-size:11px;color:var(--text2);">목표대비</span><div id="ms-diff" style="font-size:15px;font-weight:600;"></div></div>
+        </div>
+      </div>
+      <div id="records-list"></div>
+    </div>
+
+    <!-- 연누계 -->
+    <div id="page-yearly" class="page">
+      <div class="sec-title">봉사연도 월별 현황</div>
+      <div id="yearly-list"></div>
+    </div>
+
+    <!-- 관심자 목록 -->
+    <div id="page-people" class="page">
+      <div class="sec-title">
+        <span>관심자 관리</span>
+        <button class="btn-sm" onclick="showPersonForm(null)">+ 추가</button>
+      </div>
+      <input type="text" class="search-bar" placeholder="이름, 주소, 구역 검색..." oninput="renderPeople()" id="people-search">
+      <div class="filter-row">
+        <button class="filter-btn on" data-filter="all" onclick="setFilter(this)">전체</button>
+        <button class="filter-btn" data-filter="재방" onclick="setFilter(this)">재방</button>
+        <button class="filter-btn" data-filter="연구" onclick="setFilter(this)">연구</button>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+        <span style="font-size:12px;color:var(--text2);">정렬</span>
+        <select class="sort-sel" id="people-sort" onchange="renderPeople()">
+          <option value="name">이름순</option>
+          <option value="dong">구역(동)순</option>
+          <option value="recent">최근 방문순</option>
+          <option value="count">방문 횟수순</option>
+        </select>
+      </div>
+      <div id="people-list"></div>
+    </div>
+
+  </div>
+
+  <nav class="nav">
+    <button class="active" onclick="showPage('dashboard')" id="nav-dashboard">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>홈
+    </button>
+    <button onclick="showPage('add')" id="nav-add">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>기록
+    </button>
+    <button onclick="showPage('records')" id="nav-records">
+      <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>내역
+    </button>
+    <button onclick="showPage('yearly')" id="nav-yearly">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>연누계
+    </button>
+    <button onclick="showPage('people')" id="nav-people">
+      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>관심자
+    </button>
+  </nav>
+</div>
+
+<!-- 인물 상세 -->
+<div id="page-person-detail" class="detail-page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <button class="back-btn" onclick="backToPeople()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>목록
+    </button>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-sm" onclick="editPerson()">수정</button>
+      <button class="btn-sm" style="color:var(--red)" onclick="deletePerson()">삭제</button>
+    </div>
+  </div>
+  <div id="person-detail-content"></div>
+  <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px;">
+    <span style="font-size:13px;font-weight:600;">방문 이력</span>
+    <button class="btn-sm" onclick="showVisitForm()">+ 기록 추가</button>
+  </div>
+  <div id="visit-history"></div>
+</div>
+
+<!-- 인물 추가/수정 -->
+<div id="page-person-form" class="detail-page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <button class="back-btn" onclick="cancelPersonForm()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>취소
+    </button>
+    <span style="font-size:15px;font-weight:600;" id="person-form-title">관심자 추가</span>
+    <div style="width:40px"></div>
+  </div>
+  <div class="card">
+    <div class="fg2">
+      <div class="form-row"><label>이름 *</label><input type="text" id="pf-name" placeholder="홍길동"></div>
+      <div class="form-row"><label>성별</label><select id="pf-gender"><option value="">선택</option><option value="남">남</option><option value="여">여</option></select></div>
+      <div class="form-row"><label>나이</label><input type="number" id="pf-age" min="0" placeholder="45" inputmode="numeric"></div>
+      <div class="form-row"><label>방문 형식</label><select id="pf-type" onchange="toggleResearchFields()"><option value="재방">재방</option><option value="연구">연구</option></select></div>
+    </div>
+    <div class="form-row"><label>주소</label><input type="text" id="pf-address" placeholder="예) 흥덕구 가경동 123"></div>
+    <div class="fg2">
+      <div class="form-row"><label>구역(동)</label><input type="text" id="pf-dong" placeholder="가경동"></div>
+      <div class="form-row"><label>지역</label><input type="text" id="pf-region" placeholder="흥덕구"></div>
+    </div>
+    <div class="form-row"><label>첫 방문 날짜</label><input type="date" id="pf-firstdate"></div>
+    <div class="form-row"><label>메모</label><textarea id="pf-memo" placeholder="관심 주제, 특이사항..."></textarea></div>
+    <button class="btn-primary" onclick="savePerson()">저장</button>
+  </div>
+</div>
+
+<!-- 재방/연구 기록 폼 -->
+<div id="page-visit-form" class="detail-page">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+    <button class="back-btn" onclick="cancelVisitForm()">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>취소
+    </button>
+    <span style="font-size:15px;font-weight:600;" id="visit-form-title">방문 기록 추가</span>
+    <div style="width:40px"></div>
+  </div>
+  <div class="card">
+    <div class="form-row"><label>날짜 *</label><input type="date" id="vf-date"></div>
+    <div class="form-row"><label>방문 형식</label><select id="vf-type"><option value="재방">재방</option><option value="연구">연구</option></select></div>
+    <div class="form-row"><label>내용 / 메모</label><textarea id="vf-content" placeholder="대화 내용, 나눈 자료, 반응 등..."></textarea></div>
+    <button class="btn-primary" onclick="saveVisit()">저장</button>
+  </div>
+</div>
+
+<!-- 월별 상세 팝업 -->
+<div class="popup-overlay" id="month-popup" onclick="closeMonthPopup(event)">
+  <div class="popup">
+    <div class="popup-title">
+      <span id="popup-month-title">월 상세</span>
+      <button onclick="closeMonthPopup()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
+    </div>
+    <div id="popup-month-content"></div>
+    <button class="btn-share" onclick="shareMonthReportFromPopup()">
+      <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+      이 달 보고서 공유
+    </button>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot, query, orderBy }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+// ── Firebase 설정 ──
+const firebaseConfig = {
+  apiKey: "AIzaSyBOPFg2CveUnv8ql5wYnuxLvgEY7Do97ag",
+  authDomain: "pioneer-sync-bfa7f.firebaseapp.com",
+  projectId: "pioneer-sync-bfa7f",
+  storageBucket: "pioneer-sync-bfa7f.firebasestorage.app",
+  messagingSenderId: "584397546721",
+  appId: "1:584397546721:web:3c822e06040409942043a0"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+
+let currentUser = null;
+let cachedRecs = [];
+let cachedPeople = [];
+let popupMonthKey = null;
+
+// ── 상수 ──
+const MONTHLY_MIN = 50*60;
+const YEARLY_MIN  = 600*60;
+
+// ── 유틸 ──
+function pad(n){return String(n).padStart(2,'0')}
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function getMonthKey(ds){return ds.slice(0,7)}
+function getServiceYear(d){d=d||new Date();return(d.getMonth()+1)>=9?d.getFullYear():d.getFullYear()-1}
+function getServiceMonths(sy){const ms=[];for(let i=0;i<12;i++){const m=(8+i)%12+1;const y=m>=9?sy:sy+1;ms.push({year:y,month:m})}return ms}
+function fmtTime(totalMin){if(!totalMin)return'0시간';const h=Math.floor(totalMin/60),m=totalMin%60;return m?h+'시간 '+m+'분':h+'시간'}
+function fmtShort(totalMin){if(!totalMin)return'0h';const h=Math.floor(totalMin/60),m=totalMin%60;return m?h+'h '+m+'m':h+'h'}
+function toMin(h,m){return(h||0)*60+(m||0)}
+function recTotalMin(r){return(r.serviceMin||0)+(r.ldcMin||0)+(r.eduMin||0)}
+
+function sumMonth(recs,ym){
+  return recs.filter(r=>getMonthKey(r.date)===ym).reduce((a,r)=>{
+    a.service+=(r.serviceMin||0);a.ldc+=(r.ldcMin||0);
+    a.edu+=(r.eduMin||0);a.total+=recTotalMin(r);return a;
+  },{service:0,ldc:0,edu:0,total:0});
+}
+
+// 연구 중인 관심자 수 (중복 제거)
+function countResearchPeople(people){
+  return people.filter(p=>p.type==='연구').length;
+}
+
+// ── Firebase 인증 ──
+window.signInWithGoogle = async function(){
+  try{
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  }catch(e){alert('로그인 실패: '+e.message)}
+};
+
+window.showUserMenu = function(){
+  if(!currentUser)return;
+  if(confirm(currentUser.displayName+'님\n로그아웃 하시겠습니까?')){
+    signOut(auth);
+  }
+};
+
+onAuthStateChanged(auth, user=>{
+  currentUser = user;
+  if(user){
+    document.getElementById('login-screen').classList.add('hidden');
+    const name = user.displayName||user.email||'사용자';
+    document.getElementById('user-name').textContent = name.split(' ')[0];
+    document.getElementById('user-avatar').textContent = name[0];
+    listenData();
+  } else {
+    document.getElementById('login-screen').classList.remove('hidden');
+    cachedRecs=[];cachedPeople=[];
+  }
+});
+
+// ── Firestore 실시간 리스닝 ──
+function listenData(){
+  if(!currentUser)return;
+  const uid = currentUser.uid;
+
+  // 봉사 기록
+  onSnapshot(collection(db,'users',uid,'records'), snap=>{
+    cachedRecs = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderDashboard();
+    renderCal();
+  });
+
+  // 관심자
+  onSnapshot(collection(db,'users',uid,'people'), snap=>{
+    cachedPeople = snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderDashboard();
+    renderPeople();
+  });
+}
+
+// ── 데이터 저장/삭제 ──
+async function saveRec(rec){
+  if(!currentUser)return;
+  const uid=currentUser.uid;
+  const id=rec.id||('r'+Date.now());
+  await setDoc(doc(db,'users',uid,'records',id),{...rec,id});
+  return id;
+}
+async function delRec(id){
+  if(!currentUser)return;
+  await deleteDoc(doc(db,'users',currentUser.uid,'records',id));
+}
+async function savePerson(person){
+  if(!currentUser)return;
+  const uid=currentUser.uid;
+  const id=person.id||('p'+Date.now());
+  await setDoc(doc(db,'users',uid,'people',id),{...person,id});
+  return id;
+}
+async function delPerson(id){
+  if(!currentUser)return;
+  await deleteDoc(doc(db,'users',currentUser.uid,'people',id));
+}
+
+// ── 달력 ──
+let calYear,calMonth,selectedDate;
+function initCal(){
+  const now=new Date();
+  calYear=now.getFullYear();calMonth=now.getMonth();
+  selectedDate=todayStr();renderCal();
+}
+function calMove(d){
+  calMonth+=d;
+  if(calMonth>11){calMonth=0;calYear++}
+  if(calMonth<0){calMonth=11;calYear--}
+  renderCal();
+}
+window.calMove=calMove;
+function selectDay(ds){selectedDate=ds;document.getElementById('selected-date-label').textContent=ds;renderCal()}
+window.selectDay=selectDay;
+function renderCal(){
+  const recDates=new Set(cachedRecs.map(r=>r.date));
+  const now=new Date();
+  document.getElementById('cal-title').textContent=calYear+'년 '+(calMonth+1)+'월';
+  const dows=['일','월','화','수','목','금','토'];
+  document.getElementById('cal-dow-row').innerHTML=dows.map((d,i)=>`<div class="cal-dow" style="${i===0?'color:var(--red)':i===6?'color:var(--blue)':''}">${d}</div>`).join('');
+  const first=new Date(calYear,calMonth,1);
+  const last=new Date(calYear,calMonth+1,0);
+  const startDow=first.getDay();
+  const todayS=todayStr();
+  let html='';
+  for(let i=0;i<startDow;i++){
+    const d=new Date(calYear,calMonth,-(startDow-1-i));
+    const ds=d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+    html+=`<div class="cal-day other${recDates.has(ds)?' has-rec':''}${ds===selectedDate?' selected':''}" onclick="selectDay('${ds}')">${d.getDate()}</div>`;
+  }
+  for(let day=1;day<=last.getDate();day++){
+    const ds=calYear+'-'+pad(calMonth+1)+'-'+pad(day);
+    const dow=new Date(calYear,calMonth,day).getDay();
+    let cls='cal-day'+(dow===0?' sun':dow===6?' sat':'');
+    if(ds===todayS)cls+=' today';
+    if(ds===selectedDate)cls+=' selected';
+    if(recDates.has(ds))cls+=' has-rec';
+    html+=`<div class="${cls}" onclick="selectDay('${ds}')">${day}</div>`;
+  }
+  const remain=(7-((startDow+last.getDate())%7))%7;
+  for(let i=1;i<=remain;i++){
+    const m2=calMonth+2>12?1:calMonth+2;
+    const y2=calMonth+2>12?calYear+1:calYear;
+    const ds=y2+'-'+pad(m2)+'-'+pad(i);
+    html+=`<div class="cal-day other${recDates.has(ds)?' has-rec':''}" onclick="selectDay('${ds}')">${i}</div>`;
+  }
+  document.getElementById('cal-body').innerHTML=html;
+  document.getElementById('selected-date-label').textContent=selectedDate;
+}
+
+// ── 페이지 이동 ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+  document.getElementById('main-content').scrollTop=0;
+  if(id==='dashboard')renderDashboard();
+  if(id==='add')renderCal();
+  if(id==='records')renderRecords();
+  if(id==='yearly')renderYearly();
+  if(id==='people')renderPeople();
+}
+window.showPage=showPage;
+function hideDetails(){document.querySelectorAll('.detail-page').forEach(p=>p.classList.remove('active'))}
+
+// ── 대시보드 ──
+function renderDashboard(){
+  const now=new Date();
+  const curKey=now.getFullYear()+'-'+pad(now.getMonth()+1);
+  const ms=sumMonth(cachedRecs,curKey);
+  const pct=Math.min(Math.round(ms.total/MONTHLY_MIN*100),100);
+  const diff=ms.total-MONTHLY_MIN;
+  document.getElementById('d-total').textContent=fmtTime(ms.total);
+  document.getElementById('d-bar').style.width=pct+'%';
+  document.getElementById('d-service').textContent=fmtShort(ms.service);
+  document.getElementById('d-ldc').textContent=fmtShort(ms.ldc);
+  document.getElementById('d-edu').textContent=fmtShort(ms.edu);
+  document.getElementById('d-study').textContent=countResearchPeople(cachedPeople);
+  document.getElementById('d-remain').textContent=pct+'% 달성 · 남은 목표 '+fmtTime(Math.max(0,MONTHLY_MIN-ms.total));
+  const diffEl=document.getElementById('d-diff');
+  if(diff>=0){diffEl.textContent='+'+fmtTime(diff)+' 잉여';diffEl.className='val green'}
+  else{diffEl.textContent=fmtTime(-diff)+' 부족';diffEl.className='val red'}
+  const sy=getServiceYear(now),sms=getServiceMonths(sy);
+  let yt=0;sms.forEach(sm=>{yt+=sumMonth(cachedRecs,sm.year+'-'+pad(sm.month)).total});
+  const elapsed=sms.filter(sm=>new Date(sm.year,sm.month-1,1)<=now).length;
+  const ydiff=yt-(elapsed*MONTHLY_MIN);
+  document.getElementById('d-yearly').textContent=fmtShort(yt);
+  const ydEl=document.getElementById('d-yearly-diff');
+  if(ydiff>=0){ydEl.textContent='+'+fmtShort(ydiff)+' 잉여';ydEl.className='val green'}
+  else{ydEl.textContent=fmtShort(-ydiff)+' 부족';ydEl.className='val red'}
+  document.getElementById('d-p-total').textContent=cachedPeople.length;
+  document.getElementById('d-p-research').textContent=countResearchPeople(cachedPeople);
+  const sy2=getServiceYear(now);
+  document.getElementById('header-period').textContent=sy2+'~'+(sy2+1)+' 봉사연도';
+}
+
+// ── 보고서 공유 ──
+function buildReportText(monthKey){
+  const ms=sumMonth(cachedRecs,monthKey);
+  const [y,m]=monthKey.split('-');
+  const researchCount=countResearchPeople(cachedPeople);
+  const diff=ms.total-MONTHLY_MIN;
+  const diffStr=diff>=0?'잉여 +'+fmtTime(diff):'부족 '+fmtTime(-diff);
+  return `📋 ${y}년 ${parseInt(m)}월 봉사 보고\n`+
+    `━━━━━━━━━━━━━━\n`+
+    `⏱ 총 봉사시간: ${fmtTime(ms.total)}\n`+
+    `  • 봉사: ${fmtTime(ms.service)}\n`+
+    (ms.ldc?`  • LDC: ${fmtTime(ms.ldc)}\n`:'')+
+    (ms.edu?`  • 학교: ${fmtTime(ms.edu)}\n`:'')+
+    `📚 연구: ${researchCount}건\n`+
+    `📊 목표대비: ${diffStr}\n`+
+    `━━━━━━━━━━━━━━`;
+}
+window.shareMonthReport=function(){
+  const now=new Date();
+  const key=now.getFullYear()+'-'+pad(now.getMonth()+1);
+  const text=buildReportText(key);
+  if(navigator.share){navigator.share({text})}
+  else{navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!\n카카오톡이나 문자에 붙여넣기 하세요.'))}
+};
+window.shareMonthReportFromPopup=function(){
+  if(!popupMonthKey)return;
+  const text=buildReportText(popupMonthKey);
+  if(navigator.share){navigator.share({text})}
+  else{navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!'))}
+};
+
+// ── 기록 추가 ──
+function buildTimeSelects(){
+  ['f-service-h','f-ldc-h','f-edu-h'].forEach(id=>{
+    const sel=document.getElementById(id);sel.innerHTML='';
+    for(let i=0;i<=23;i++){const o=document.createElement('option');o.value=i;o.textContent=i;sel.appendChild(o)}
+  });
+  ['f-service-m','f-ldc-m','f-edu-m'].forEach(id=>{
+    const sel=document.getElementById(id);sel.innerHTML='';
+    for(let i=0;i<60;i+=5){const o=document.createElement('option');o.value=i;o.textContent=pad(i);sel.appendChild(o)}
+  });
+}
+function resetTimeInputs(){
+  ['f-service-h','f-service-m','f-ldc-h','f-ldc-m','f-edu-h','f-edu-m'].forEach(id=>document.getElementById(id).value=0);
+  ['f-ldc-memo','f-edu-memo','f-memo'].forEach(id=>document.getElementById(id).value='');
+}
+window.addRecord=async function(){
+  if(!selectedDate){alert('날짜를 선택해주세요');return}
+  const serviceMin=toMin(+document.getElementById('f-service-h').value,+document.getElementById('f-service-m').value);
+  const ldcMin=toMin(+document.getElementById('f-ldc-h').value,+document.getElementById('f-ldc-m').value);
+  const eduMin=toMin(+document.getElementById('f-edu-h').value,+document.getElementById('f-edu-m').value);
+  if(serviceMin+ldcMin+eduMin===0){alert('최소 하나의 시간을 입력해주세요');return}
+  const r={
+    date:selectedDate,serviceMin,ldcMin,eduMin,
+    ldcMemo:document.getElementById('f-ldc-memo').value,
+    eduMemo:document.getElementById('f-edu-memo').value,
+    memo:document.getElementById('f-memo').value,
+    createdAt:Date.now()
+  };
+  await saveRec(r);
+  resetTimeInputs();
+  alert('저장되었습니다!');
+  showPage('dashboard');
+};
+
+// ── 월별 기록 ──
+function buildMonthSelect(){
+  const sel=document.getElementById('month-select');
+  const curVal=sel.value;sel.innerHTML='';
+  const now=new Date();
+  const curKey=now.getFullYear()+'-'+pad(now.getMonth()+1);
+  const monthSet=new Set(cachedRecs.map(r=>getMonthKey(r.date)));
+  monthSet.add(curKey);
+  [...monthSet].sort().reverse().forEach(key=>{
+    const [y,m]=key.split('-');
+    const o=document.createElement('option');
+    o.value=key;o.textContent=y+'년 '+parseInt(m)+'월';
+    if(key===(curVal||curKey))o.selected=true;
+    sel.appendChild(o);
+  });
+}
+window.renderRecords=function(){
+  buildMonthSelect();
+  const key=document.getElementById('month-select').value;
+  const filtered=cachedRecs.filter(r=>getMonthKey(r.date)===key).sort((a,b)=>a.date.localeCompare(b.date));
+  const list=document.getElementById('records-list');
+  const summary=document.getElementById('month-summary');
+  if(!filtered.length){list.innerHTML='<div class="empty">이 달 기록이 없습니다</div>';summary.style.display='none';return}
+  const ms=sumMonth(cachedRecs,key);
+  summary.style.display='block';
+  document.getElementById('ms-total').textContent=fmtTime(ms.total);
+  document.getElementById('ms-service').textContent=fmtTime(ms.service);
+  document.getElementById('ms-ldc').textContent=fmtTime(ms.ldc);
+  document.getElementById('ms-edu').textContent=fmtTime(ms.edu);
+  const diff=ms.total-MONTHLY_MIN;
+  const diffEl=document.getElementById('ms-diff');
+  if(diff>=0){diffEl.textContent='+'+fmtTime(diff);diffEl.style.color='var(--green)'}
+  else{diffEl.textContent='-'+fmtTime(-diff);diffEl.style.color='var(--red)'}
+  const days={};
+  filtered.forEach(r=>{if(!days[r.date])days[r.date]=[];days[r.date].push(r)});
+  const DOW=['일','월','화','수','목','금','토'];
+  list.innerHTML=Object.keys(days).sort().reverse().map(date=>{
+    const dayRecs=days[date];
+    const d=new Date(date+'T00:00:00');
+    const dow=DOW[d.getDay()];
+    const dowColor=d.getDay()===0?'var(--red)':d.getDay()===6?'var(--blue)':'var(--text2)';
+    const dayTotal=dayRecs.reduce((a,r)=>a+recTotalMin(r),0);
+    const recRows=dayRecs.map(r=>{
+      const sMin=r.serviceMin||0,lMin=r.ldcMin||0,eMin=r.eduMin||0;
+      return`<div style="padding:10px 0;border-top:.5px solid var(--border);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="flex:1;">
+            ${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''}
+            ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''}
+            ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''}
+            ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}
+          </div>
+          <button class="btn-icon" onclick="deleteRecord('${r.id}')">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+          </button>
+        </div>
+      </div>`
+    }).join('');
+    return`<div class="card" style="padding:0;overflow:hidden;margin-bottom:10px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);">
+        <div style="display:flex;align-items:baseline;gap:8px;">
+          <span style="font-size:16px;font-weight:700;">${date.slice(5).replace('-','/')}</span>
+          <span style="font-size:13px;color:${dowColor};font-weight:600;">(${dow})</span>
+        </div>
+        <span style="font-size:15px;font-weight:700;color:var(--green);">${fmtTime(dayTotal)}</span>
+      </div>
+      <div style="padding:0 14px;">${recRows}</div>
+    </div>`
+  }).join('');
+};
+window.deleteRecord=async function(id){
+  if(!confirm('이 기록을 삭제할까요?'))return;
+  await delRec(id);
+  window.renderRecords();
+};
+
+// ── 연누계 ──
+function renderYearly(){
+  const now=new Date(),sy=getServiceYear(now),sms=getServiceMonths(sy);
+  let yt=0;
+  const rows=sms.map(sm=>{
+    const key=sm.year+'-'+pad(sm.month),s=sumMonth(cachedRecs,key);
+    yt+=s.total;
+    const isFuture=new Date(sm.year,sm.month-1,1)>now;
+    const pct=Math.min(Math.round(s.total/MONTHLY_MIN*100),100);
+    return`<div class="yearly-row" onclick="openMonthPopup('${key}')">
+      <span style="font-size:13px;min-width:30px;">${sm.month}월</span>
+      <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;">
+        <div style="height:100%;background:var(--green);border-radius:3px;width:${isFuture?0:pct}%"></div>
+      </div>
+      <span style="font-size:13px;font-weight:600;min-width:64px;text-align:right;">${isFuture?'-':fmtTime(s.total)}</span>
+      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`
+  }).join('');
+  document.getElementById('yearly-list').innerHTML=`
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:12px;color:var(--text2);">${sy}~${sy+1} 연도 누계</span>
+        <span style="font-size:17px;font-weight:600;">${fmtTime(yt)} / 600시간</span>
+      </div>
+      <div class="prog" style="margin-top:8px;"><div class="prog-fill" style="width:${Math.min(Math.round(yt/YEARLY_MIN*100),100)}%"></div></div>
+    </div>
+    <div class="card" style="padding:8px 14px;">${rows}</div>`
+}
+
+// ── 월별 팝업 ──
+window.openMonthPopup=function(key){
+  popupMonthKey=key;
+  const [y,m]=key.split('-');
+  document.getElementById('popup-month-title').textContent=y+'년 '+parseInt(m)+'월 상세';
+  const ms=sumMonth(cachedRecs,key);
+  const researchCount=countResearchPeople(cachedPeople);
+  const diff=ms.total-MONTHLY_MIN;
+  const diffStr=diff>=0?`<span class="green">+${fmtTime(diff)} 잉여</span>`:`<span class="red">${fmtTime(-diff)} 부족</span>`;
+  document.getElementById('popup-month-content').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div class="metric"><div class="label">총 봉사시간</div><div class="val">${fmtTime(ms.total)}</div></div>
+      <div class="metric"><div class="label">봉사</div><div class="val">${fmtTime(ms.service)}</div></div>
+      <div class="metric"><div class="label">LDC</div><div class="val">${fmtTime(ms.ldc)}</div></div>
+      <div class="metric"><div class="label">학교</div><div class="val">${fmtTime(ms.edu)}</div></div>
+      <div class="metric"><div class="label">연구</div><div class="val">${researchCount}건</div></div>
+      <div class="metric"><div class="label">목표대비</div><div class="val" style="font-size:16px;">${diffStr}</div></div>
+    </div>`;
+  document.getElementById('month-popup').classList.add('active');
+};
+window.closeMonthPopup=function(e){
+  if(!e||e.target===document.getElementById('month-popup'))
+    document.getElementById('month-popup').classList.remove('active');
+};
+
+// ── 관심자 ──
+let peopleFilter='all';
+let currentPersonId=null,editPersonId=null;
+window.setFilter=function(btn){peopleFilter=btn.dataset.filter;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPeople()};
+function renderPeople(){
+  const q=(document.getElementById('people-search').value||'').toLowerCase();
+  const sort=document.getElementById('people-sort').value;
+  let filtered=cachedPeople.filter(p=>{
+    if(peopleFilter!=='all'&&p.type!==peopleFilter)return false;
+    if(q&&!p.name.toLowerCase().includes(q)&&!(p.address||'').toLowerCase().includes(q)&&!(p.dong||'').includes(q))return false;
+    return true;
+  });
+  filtered.sort((a,b)=>{
+    if(sort==='name')return a.name.localeCompare(b.name);
+    if(sort==='dong')return(a.dong||'').localeCompare(b.dong||'');
+    if(sort==='recent'){const la=(a.visits||[]).length?a.visits[a.visits.length-1].date:'0';const lb=(b.visits||[]).length?b.visits[b.visits.length-1].date:'0';return lb.localeCompare(la)}
+    if(sort==='count')return(b.visits||[]).length-(a.visits||[]).length;
+    return 0;
+  });
+  const list=document.getElementById('people-list');
+  if(!filtered.length){list.innerHTML='<div class="empty">등록된 관심자가 없습니다</div>';return}
+  list.innerHTML=filtered.map(p=>{
+    const gc=p.gender==='여'?'f':p.gender==='남'?'m':'n';
+    const vcount=(p.visits||[]).length;
+    const lastVisit=vcount?p.visits[vcount-1].date:'없음';
+    const typeBadge=p.type==='연구'?'<span class="badge b-research">연구</span>':'<span class="badge b-visit">재방</span>';
+    const gBadge=p.gender?`<span class="badge ${gc==='f'?'b-f':'b-m'}">${p.gender}</span>`:'';
+    return`<div class="person-card" onclick="showPersonDetail('${p.id}')">
+      <div class="avatar ${gc}">${p.name.slice(-2)}</div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;flex-wrap:wrap;">
+          <span style="font-size:15px;font-weight:600;">${p.name}</span>${gBadge}${p.age?`<span style="font-size:12px;color:var(--text2);">${p.age}세</span>`:''}${typeBadge}
+        </div>
+        <div style="font-size:12px;color:var(--text2);">${p.dong?p.dong+' · ':''}방문 ${vcount}회 · 최근 ${lastVisit}</div>
+      </div>
+      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`
+  }).join('');
+}
+
+window.showPersonDetail=function(id){
+  currentPersonId=id;
+  const p=cachedPeople.find(x=>x.id===id);
+  if(!p)return;
+  hideDetails();
+  document.getElementById('page-person-detail').classList.add('active');
+  const gc=p.gender==='여'?'f':p.gender==='남'?'m':'n';
+  const rows=[
+    p.gender?['성별',p.gender]:[],p.age?['나이',p.age+'세']:[],
+    p.type?['방문형식',p.type]:[],p.firstdate?['첫방문',p.firstdate]:[],
+    p.address?['주소',p.address]:[],
+    (p.dong||p.region)?['구역',[p.region,p.dong].filter(Boolean).join(' · ')]:[],
+    p.memo?['메모',p.memo]:[]
+  ].filter(r=>r.length).map(([l,v])=>`<div class="detail-row"><span class="dl">${l}</span><span>${v}</span></div>`).join('');
+  document.getElementById('person-detail-content').innerHTML=`
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+        <div class="avatar ${gc}" style="width:50px;height:50px;font-size:18px;">${p.name.slice(-2)}</div>
+        <div><div style="font-size:18px;font-weight:600;">${p.name}</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">${(p.visits||[]).length}회 방문 기록</div></div>
+      </div>${rows}
+    </div>`;
+  renderVisitHistory(p);
+};
+
+function renderVisitHistory(p){
+  const visits=(p.visits||[]).slice().reverse();
+  const el=document.getElementById('visit-history');
+  if(!visits.length){el.innerHTML='<div class="empty">방문 이력이 없습니다</div>';return}
+  el.innerHTML=`<div class="card">${visits.map((v,ri)=>{
+    const realIdx=p.visits.length-1-ri;
+    return`<div class="hist-item">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:13px;font-weight:600;">${v.date}</span>
+          <span class="badge ${v.type==='연구'?'b-research':'b-visit'}">${v.type||'재방'}</span>
+          <span style="font-size:12px;color:var(--text3);">${realIdx+1}회차</span>
+        </div>
+        <button class="btn-icon" onclick="deleteVisit('${p.id}',${realIdx})">
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+        </button>
+      </div>
+      ${v.content?`<div style="font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5;">${v.content}</div>`:''}
+    </div>`
+  }).join('')}</div>`
+}
+
+window.showPersonForm=function(id){
+  editPersonId=id||null;hideDetails();
+  document.getElementById('page-person-form').classList.add('active');
+  if(id){
+    const p=cachedPeople.find(x=>x.id===id);
+    document.getElementById('person-form-title').textContent='관심자 수정';
+    document.getElementById('pf-name').value=p.name||'';
+    document.getElementById('pf-gender').value=p.gender||'';
+    document.getElementById('pf-age').value=p.age||'';
+    document.getElementById('pf-type').value=p.type||'재방';
+    document.getElementById('pf-address').value=p.address||'';
+    document.getElementById('pf-dong').value=p.dong||'';
+    document.getElementById('pf-region').value=p.region||'';
+    document.getElementById('pf-firstdate').value=p.firstdate||'';
+    document.getElementById('pf-memo').value=p.memo||'';
+  }else{
+    document.getElementById('person-form-title').textContent='관심자 추가';
+    ['pf-name','pf-age','pf-address','pf-dong','pf-region','pf-memo'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pf-gender').value='';
+    document.getElementById('pf-type').value='재방';
+    document.getElementById('pf-firstdate').value=todayStr();
+  }
+};
+window.cancelPersonForm=function(){hideDetails();showPage('people')};
+window.toggleResearchFields=function(){};
+window.savePerson=async function(){
+  const name=document.getElementById('pf-name').value.trim();
+  if(!name){alert('이름을 입력해주세요');return}
+  const existingPerson=editPersonId?cachedPeople.find(p=>p.id===editPersonId):null;
+  const data={
+    name,gender:document.getElementById('pf-gender').value,
+    age:document.getElementById('pf-age').value,
+    type:document.getElementById('pf-type').value,
+    address:document.getElementById('pf-address').value,
+    dong:document.getElementById('pf-dong').value,
+    region:document.getElementById('pf-region').value,
+    firstdate:document.getElementById('pf-firstdate').value,
+    memo:document.getElementById('pf-memo').value,
+    visits:existingPerson?existingPerson.visits||[]:[]
+  };
+  if(editPersonId)data.id=editPersonId;
+  await savePerson(data);
+  hideDetails();showPage('people');
+};
+window.editPerson=function(){window.showPersonForm(currentPersonId)};
+window.deletePerson=async function(){
+  if(!confirm('이 관심자를 삭제할까요?'))return;
+  await delPerson(currentPersonId);
+  hideDetails();showPage('people');
+};
+window.backToPeople=function(){hideDetails();showPage('people')};
+
+window.showVisitForm=function(){
+  hideDetails();
+  document.getElementById('page-visit-form').classList.add('active');
+  const p=cachedPeople.find(x=>x.id===currentPersonId);
+  document.getElementById('visit-form-title').textContent=(p&&p.type==='연구'?'연구':'재방')+' 기록 추가';
+  document.getElementById('vf-date').value=todayStr();
+  document.getElementById('vf-content').value='';
+  document.getElementById('vf-type').value=p?p.type:'재방';
+};
+window.cancelVisitForm=function(){hideDetails();window.showPersonDetail(currentPersonId)};
+window.saveVisit=async function(){
+  const date=document.getElementById('vf-date').value;
+  if(!date){alert('날짜를 선택해주세요');return}
+  const p=cachedPeople.find(x=>x.id===currentPersonId);
+  if(!p)return;
+  const visits=[...(p.visits||[]),{date,type:document.getElementById('vf-type').value,content:document.getElementById('vf-content').value}];
+  visits.sort((a,b)=>a.date.localeCompare(b.date));
+  await savePerson({...p,visits});
+  hideDetails();window.showPersonDetail(currentPersonId);
+};
+window.deleteVisit=async function(personId,visitIdx){
+  if(!confirm('이 이력을 삭제할까요?'))return;
+  const p=cachedPeople.find(x=>x.id===personId);
+  if(!p)return;
+  const visits=[...(p.visits||[])];
+  visits.splice(visitIdx,1);
+  await savePerson({...p,visits});
+  renderVisitHistory({...p,visits});
+};
+
+// ── 초기화 ──
+buildTimeSelects();
+initCal();
+</script>
+</body>
+</html>
