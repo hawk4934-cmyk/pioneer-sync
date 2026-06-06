@@ -411,7 +411,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged }
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, browserLocalPersistence, setPersistence, signOut, onAuthStateChanged }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 import { getFirestore, collection, doc, setDoc, deleteDoc, getDocs, onSnapshot, query, orderBy }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
@@ -464,24 +464,13 @@ function countResearchPeople(people){
 
 // ── Firebase 인증 ──
 window.signInWithGoogle = async function(){
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({prompt:'select_account'});
   try{
-    const provider = new GoogleAuthProvider();
-    const ua = navigator.userAgent;
-    // iOS(아이폰/아이패드), 사파리, 카카오톡, 인스타그램은 리다이렉트
-    const isIOS = /iPad|iPhone|iPod/.test(ua);
-    const isSafari = /^((?!chrome|android).)*safari/i.test(ua);
-    const isInApp = ua.includes('KAKAOTALK') || ua.includes('Instagram') || ua.includes('NAVER');
-    if(isIOS || isSafari || isInApp){
-      await signInWithRedirect(auth, provider);
-    } else {
-      await signInWithPopup(auth, provider);
-    }
+    // 모든 환경에서 리다이렉트 방식 사용 (iOS 호환)
+    await signInWithRedirect(auth, provider);
   }catch(e){
-    // 팝업 실패 시 리다이렉트로 재시도
-    try{
-      const provider = new GoogleAuthProvider();
-      await signInWithRedirect(auth, provider);
-    }catch(e2){alert('로그인 실패: '+e2.message)}
+    alert('로그인 실패: '+e.message);
   }
 };
 
@@ -492,8 +481,10 @@ window.showUserMenu = function(){
   }
 };
 
-// 리다이렉트 후 결과 처리
-getRedirectResult(auth).catch(e=>console.log('redirect:',e));
+// 리다이렉트 후 결과 처리 (iOS 로그인 완료 후)
+getRedirectResult(auth).then(result=>{
+  if(result&&result.user) console.log('리다이렉트 로그인 성공:', result.user.email);
+}).catch(e=>console.log('redirect error:',e.code));
 
 onAuthStateChanged(auth, user=>{
   currentUser = user;
