@@ -33,22 +33,21 @@
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple-system,'Malgun Gothic',sans-serif;overflow:hidden}
 #app{height:100%;display:flex;flex-direction:column}
-
-/* 로그인/관리자 화면 공통 */
-.screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:32px}
+.screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;padding:32px;overflow-y:auto}
 .screen.hidden{display:none}
-.logo{width:72px;height:72px;background:var(--green);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px}
+.logo{width:72px;height:72px;background:var(--green);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:20px;flex-shrink:0}
 .screen-title{font-size:22px;font-weight:700;margin-bottom:6px;text-align:center}
-.screen-sub{font-size:13px;color:var(--text2);margin-bottom:28px;text-align:center;line-height:1.6}
+.screen-sub{font-size:13px;color:var(--text2);margin-bottom:24px;text-align:center;line-height:1.6}
 .input-group{width:100%;max-width:320px;margin-bottom:12px}
 .input-group label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px}
 .input-group input{width:100%;padding:12px 14px;font-size:15px;border:.5px solid var(--border2);border-radius:12px;background:var(--bg2);color:var(--text1);font-family:inherit;-webkit-appearance:none}
 .btn-main{width:100%;max-width:320px;padding:14px;background:var(--primary);color:var(--bg);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:4px}
-.btn-main:active{opacity:.8}
-.btn-link{background:none;border:none;color:var(--text2);font-size:13px;cursor:pointer;font-family:inherit;margin-top:16px;text-decoration:underline}
-.error-msg{color:var(--red);font-size:13px;margin-top:8px;text-align:center;min-height:20px}
-
-/* 앱 레이아웃 */
+.btn-main.outline{background:none;color:var(--text1);border:.5px solid var(--border2)}
+.btn-link{background:none;border:none;color:var(--green);font-size:14px;cursor:pointer;font-family:inherit;margin-top:14px;font-weight:500}
+.error-msg{color:var(--red);font-size:13px;margin-top:6px;text-align:center;min-height:18px;width:100%;max-width:320px}
+.tab-row{display:flex;gap:0;width:100%;max-width:320px;margin-bottom:20px;border:.5px solid var(--border2);border-radius:12px;overflow:hidden}
+.tab-btn{flex:1;padding:10px;font-size:14px;font-weight:500;border:none;background:none;cursor:pointer;color:var(--text2);font-family:inherit}
+.tab-btn.active{background:var(--primary);color:var(--bg)}
 .header{padding:14px 16px 10px;border-bottom:.5px solid var(--border);flex-shrink:0}
 .header-top{display:flex;justify-content:space-between;align-items:center}
 .header h1{font-size:17px;font-weight:600}
@@ -120,8 +119,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 .cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
 .cal-dow{text-align:center;font-size:11px;color:var(--text2);padding:8px 0}
 .cal-day{text-align:center;padding:7px 2px;font-size:13px;cursor:pointer;border-radius:8px;margin:2px;position:relative;min-height:34px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.cal-day.other{color:var(--text3)}
-.cal-day.today{font-weight:700;color:var(--green)}
+.cal-day.other{color:var(--text3)}.cal-day.today{font-weight:700;color:var(--green)}
 .cal-day.selected{background:var(--primary)!important;color:var(--bg)!important;border-radius:50%;width:32px;height:32px;margin:3px auto;padding:0}
 .cal-day.has-rec::after{content:'';width:5px;height:5px;border-radius:50%;background:var(--green);display:block}
 .cal-day.selected.has-rec::after{background:var(--bg)}
@@ -134,10 +132,10 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 .popup{background:var(--bg);border-radius:20px 20px 0 0;padding:20px 16px calc(20px + var(--safe-b));width:100%;max-height:80vh;overflow-y:auto}
 .popup-title{font-size:16px;font-weight:700;margin-bottom:16px;display:flex;justify-content:space-between;align-items:center}
 .btn-share{display:flex;align-items:center;gap:8px;width:100%;padding:12px 14px;background:var(--green-bg);color:var(--green-text);border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:10px;justify-content:center}
-
-/* 관리자 화면 */
-.admin-screen{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;padding:14px 16px calc(20px + var(--safe-b));display:none}
-.admin-screen.active{display:block}
+.setting-row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:.5px solid var(--border)}
+.setting-row:last-child{border-bottom:none}
+.master-screen{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;padding:14px 16px calc(20px + var(--safe-b));display:none}
+.master-screen.active{display:block}
 .user-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:.5px solid var(--border)}
 .user-row:last-child{border-bottom:none}
 .btn-danger{padding:6px 12px;font-size:12px;border:.5px solid var(--red);border-radius:8px;background:none;cursor:pointer;color:var(--red);font-family:inherit}
@@ -145,62 +143,78 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 </head>
 <body>
 
-<!-- 로그인 화면 -->
-<div id="login-screen" class="screen">
+<!-- 로그인/회원가입 화면 -->
+<div id="auth-screen" class="screen">
   <div class="logo">📋</div>
   <div class="screen-title">파이오니아 봉사기록</div>
-  <div class="screen-sub">아이디와 비밀번호로 로그인하세요</div>
-  <div class="input-group"><label>아이디</label><input type="text" id="login-id" placeholder="아이디 입력" autocomplete="username"></div>
-  <div class="input-group"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호 입력" autocomplete="current-password"></div>
-  <div class="error-msg" id="login-error"></div>
-  <button class="btn-main" onclick="doLogin()">로그인</button>
-  <button class="btn-link" onclick="showAdminLogin()">관리자</button>
-</div>
-
-<!-- 관리자 로그인 -->
-<div id="admin-login-screen" class="screen hidden">
-  <div class="logo" style="background:var(--blue)">⚙️</div>
-  <div class="screen-title">관리자 로그인</div>
-  <div class="input-group"><label>관리자 비밀번호</label><input type="password" id="admin-pw" placeholder="관리자 비밀번호"></div>
-  <div class="error-msg" id="admin-login-error"></div>
-  <button class="btn-main" onclick="doAdminLogin()">로그인</button>
-  <button class="btn-link" onclick="backToLogin()">← 돌아가기</button>
-</div>
-
-<!-- 관리자 화면 -->
-<div id="admin-screen" class="admin-screen">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-    <h2 style="font-size:18px;font-weight:700;">⚙️ 관리자</h2>
-    <button class="btn-sm" onclick="closeAdmin()">닫기</button>
+  <div class="screen-sub" id="auth-sub">로그인하여 봉사 기록을 관리하세요</div>
+  <div class="tab-row">
+    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">로그인</button>
+    <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">회원가입</button>
   </div>
 
-  <!-- 계정 추가 -->
-  <div class="card" style="margin-bottom:16px;">
-    <div style="font-size:14px;font-weight:600;margin-bottom:12px;">새 계정 추가</div>
-    <div class="fg2">
-      <div class="form-row"><label>아이디</label><input type="text" id="new-uid" placeholder="아이디"></div>
-      <div class="form-row"><label>이름</label><input type="text" id="new-name" placeholder="이름"></div>
-    </div>
-    <div class="form-row"><label>비밀번호</label><input type="password" id="new-pw" placeholder="비밀번호"></div>
-    <button class="btn-primary" onclick="addUser()">계정 추가</button>
+  <!-- 로그인 -->
+  <div id="login-form" style="width:100%;max-width:320px;">
+    <div class="input-group"><label>아이디</label><input type="text" id="login-id" placeholder="아이디" autocomplete="username"></div>
+    <div class="input-group"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password"></div>
+    <div class="error-msg" id="login-error"></div>
+    <button class="btn-main" onclick="doLogin()">로그인</button>
   </div>
 
-  <!-- 사용자 목록 -->
-  <div class="card">
-    <div style="font-size:14px;font-weight:600;margin-bottom:12px;">사용자 목록</div>
-    <div id="user-list"></div>
+  <!-- 회원가입 -->
+  <div id="signup-form" style="width:100%;max-width:320px;display:none;">
+    <div class="input-group"><label>이름</label><input type="text" id="signup-name" placeholder="이름"></div>
+    <div class="input-group"><label>아이디 (영문/숫자)</label><input type="text" id="signup-id" placeholder="아이디" autocomplete="username"></div>
+    <div class="input-group"><label>비밀번호</label><input type="password" id="signup-pw" placeholder="비밀번호" autocomplete="new-password"></div>
+    <div class="input-group"><label>비밀번호 확인</label><input type="password" id="signup-pw2" placeholder="비밀번호 확인"></div>
+    <div class="error-msg" id="signup-error"></div>
+    <button class="btn-main" onclick="doSignup()">가입하기</button>
   </div>
 </div>
 
-<!-- 비번 초기화 팝업 -->
-<div class="popup-overlay" id="reset-popup" onclick="closeResetPopup(event)">
+<!-- 마스터 로그인 팝업 -->
+<div class="popup-overlay" id="master-login-popup" onclick="closeMasterLogin(event)">
   <div class="popup">
     <div class="popup-title">
-      <span id="reset-popup-title">비밀번호 초기화</span>
-      <button onclick="closeResetPopup()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
+      <span>마스터 로그인</span>
+      <button onclick="closeMasterLogin()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
     </div>
-    <div class="form-row"><label>새 비밀번호</label><input type="password" id="reset-new-pw" placeholder="새 비밀번호 입력"></div>
-    <button class="btn-primary" onclick="doResetPw()">초기화</button>
+    <div class="form-row"><label>마스터 비밀번호</label><input type="password" id="master-pw-input" placeholder="비밀번호"></div>
+    <div class="error-msg" id="master-login-error"></div>
+    <button class="btn-primary" onclick="doMasterLogin()">로그인</button>
+  </div>
+</div>
+
+<!-- 마스터 화면 -->
+<div id="master-screen" class="master-screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+    <h2 style="font-size:18px;font-weight:700;">⚙️ 마스터 관리</h2>
+    <button class="btn-sm" onclick="closeMaster()">닫기</button>
+  </div>
+  <div class="card" style="margin-bottom:16px;">
+    <div style="font-size:14px;font-weight:600;margin-bottom:12px;">사용자 비밀번호 초기화</div>
+    <div class="form-row"><label>아이디</label><input type="text" id="reset-uid" placeholder="초기화할 아이디"></div>
+    <div class="form-row"><label>새 비밀번호</label><input type="password" id="reset-newpw" placeholder="새 비밀번호"></div>
+    <button class="btn-primary" onclick="doMasterReset()">비밀번호 초기화</button>
+  </div>
+  <div class="card">
+    <div style="font-size:14px;font-weight:600;margin-bottom:12px;">전체 사용자 목록</div>
+    <div id="master-user-list"><div class="empty">로딩 중...</div></div>
+  </div>
+</div>
+
+<!-- 비번 변경 팝업 -->
+<div class="popup-overlay" id="change-pw-popup" onclick="closeChangePw(event)">
+  <div class="popup">
+    <div class="popup-title">
+      <span>비밀번호 변경</span>
+      <button onclick="closeChangePw()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
+    </div>
+    <div class="form-row"><label>현재 비밀번호</label><input type="password" id="cp-old" placeholder="현재 비밀번호"></div>
+    <div class="form-row"><label>새 비밀번호</label><input type="password" id="cp-new" placeholder="새 비밀번호"></div>
+    <div class="form-row"><label>새 비밀번호 확인</label><input type="password" id="cp-new2" placeholder="새 비밀번호 확인"></div>
+    <div class="error-msg" id="cp-error"></div>
+    <button class="btn-primary" onclick="doChangePw()">변경</button>
   </div>
 </div>
 
@@ -208,7 +222,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
   <div class="header">
     <div class="header-top">
       <h1>파이오니아 봉사기록</h1>
-      <button class="user-btn" onclick="showUserMenu()">
+      <button class="user-btn" onclick="showPage('settings')">
         <div class="user-avatar" id="user-avatar">?</div>
         <span id="user-name-label">-</span>
       </button>
@@ -330,6 +344,31 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
       </div>
       <div id="people-list"></div>
     </div>
+
+    <!-- 설정 -->
+    <div id="page-settings" class="page">
+      <div class="sec-title">설정</div>
+      <div class="card">
+        <div class="setting-row">
+          <div>
+            <div style="font-size:14px;font-weight:500;" id="settings-username">-</div>
+            <div style="font-size:12px;color:var(--text2);" id="settings-uid">-</div>
+          </div>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="openChangePw()">
+          <span style="font-size:14px;">비밀번호 변경</span>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
+        </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="doLogout()">
+          <span style="font-size:14px;color:var(--red);">로그아웃</span>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:20px;">
+        <div style="font-size:11px;color:var(--text3);" id="ver-label">파이오니아 봉사기록 v2.0</div>
+      </div>
+    </div>
+
   </div>
 
   <nav class="nav">
@@ -425,7 +464,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc }
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDoc, getDocs }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -437,14 +476,15 @@ const firebaseConfig = {
   appId: "1:584397546721:web:3c822e06040409942043a0"
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
-const db = getFirestore(firebaseApp);
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-const MONTHLY_MIN=50*60, YEARLY_MIN=600*60;
-const ADMIN_PW='3957';
+const MONTHLY_MIN=50*60, YEARLY_MIN=600*60, MASTER_PW='3957';
 let currentUid=null, currentUserName='', cachedRecs=[], cachedPeople=[];
-let popupMonthKey=null, resetTargetUid=null;
+let popupMonthKey=null, masterTapCount=0, masterTapTimer=null;
+let unsubRecs=null, unsubPeople=null;
 
+// ── 유틸 ──
 function pad(n){return String(n).padStart(2,'0')}
 function todayStr(){const d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
 function getMonthKey(ds){return ds.slice(0,7)}
@@ -467,143 +507,185 @@ function countResearchInMonth(monthKey){
   return set.size;
 }
 
+// ── 자동 로그인 ──
+function saveSession(uid,name){localStorage.setItem('p_session',JSON.stringify({uid,name,ts:Date.now()}))}
+function loadSession(){
+  try{
+    const s=JSON.parse(localStorage.getItem('p_session')||'null');
+    if(!s)return null;
+    // 30일 유효
+    if(Date.now()-s.ts>30*24*60*60*1000){localStorage.removeItem('p_session');return null}
+    return s;
+  }catch(e){return null}
+}
+function clearSession(){localStorage.removeItem('p_session')}
+
+// ── 탭 전환 ──
+window.switchTab=function(tab){
+  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+  document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
+  document.getElementById('login-form').style.display=tab==='login'?'block':'none';
+  document.getElementById('signup-form').style.display=tab==='signup'?'block':'none';
+};
+
 // ── 로그인 ──
 async function doLogin(){
   const uid=document.getElementById('login-id').value.trim();
   const pw=document.getElementById('login-pw').value;
   if(!uid||!pw){document.getElementById('login-error').textContent='아이디와 비밀번호를 입력해주세요';return}
+  // 마스터 계정 처리
+  if(uid==='master'){
+    if(pw!==MASTER_PW){document.getElementById('login-error').textContent='마스터 비밀번호가 틀렸습니다';return}
+    document.getElementById('auth-screen').classList.add('hidden');
+    document.getElementById('master-screen').classList.add('active');
+    await loadMasterUserList();
+    return;
+  }
   try{
     const snap=await getDoc(doc(db,'accounts',uid));
     if(!snap.exists()){document.getElementById('login-error').textContent='존재하지 않는 아이디입니다';return}
     const data=snap.data();
     if(data.password!==pw){document.getElementById('login-error').textContent='비밀번호가 틀렸습니다';return}
-    currentUid=uid;
-    currentUserName=data.name||uid;
-    document.getElementById('login-screen').classList.add('hidden');
-    document.getElementById('user-name-label').textContent=currentUserName;
-    document.getElementById('user-avatar').textContent=currentUserName[0];
-    listenData();
-  }catch(e){document.getElementById('login-error').textContent='오류: '+e.message}
+    loginSuccess(uid,data.name||uid);
+  }catch(e){document.getElementById('login-error').textContent='오류가 발생했습니다'}
 }
 window.doLogin=doLogin;
 
-document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
-document.getElementById('login-id').addEventListener('keydown',e=>{if(e.key==='Enter')document.getElementById('login-pw').focus()});
+function loginSuccess(uid,name){
+  currentUid=uid;currentUserName=name;
+  saveSession(uid,name);
+  document.getElementById('auth-screen').classList.add('hidden');
+  document.getElementById('user-name-label').textContent=name;
+  document.getElementById('user-avatar').textContent=name[0];
+  document.getElementById('settings-username').textContent=name;
+  document.getElementById('settings-uid').textContent='아이디: '+uid;
+  listenData();
+}
 
-// ── 관리자 로그인 ──
-window.showAdminLogin=function(){
-  document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('admin-login-screen').classList.remove('hidden');
-};
-window.backToLogin=function(){
-  document.getElementById('admin-login-screen').classList.add('hidden');
-  document.getElementById('login-screen').classList.remove('hidden');
-};
-window.doAdminLogin=function(){
-  const pw=document.getElementById('admin-pw').value;
-  if(pw!==ADMIN_PW){document.getElementById('admin-login-error').textContent='비밀번호가 틀렸습니다';return}
-  document.getElementById('admin-login-screen').classList.add('hidden');
-  document.getElementById('admin-screen').classList.add('active');
-  loadUserList();
-};
-window.closeAdmin=function(){
-  document.getElementById('admin-screen').classList.remove('active');
-  document.getElementById('login-screen').classList.remove('hidden');
-  document.getElementById('admin-pw').value='';
+// ── 회원가입 ──
+async function doSignup(){
+  const name=document.getElementById('signup-name').value.trim();
+  const uid=document.getElementById('signup-id').value.trim();
+  const pw=document.getElementById('signup-pw').value;
+  const pw2=document.getElementById('signup-pw2').value;
+  const errEl=document.getElementById('signup-error');
+  if(!name||!uid||!pw){errEl.textContent='모든 항목을 입력해주세요';return}
+  if(!/^[a-zA-Z0-9_]+$/.test(uid)){errEl.textContent='아이디는 영문, 숫자, _만 가능해요';return}
+  if(pw.length<4){errEl.textContent='비밀번호는 4자 이상이어야 해요';return}
+  if(pw!==pw2){errEl.textContent='비밀번호가 일치하지 않아요';return}
+  try{
+    const snap=await getDoc(doc(db,'accounts',uid));
+    if(snap.exists()){errEl.textContent='이미 사용 중인 아이디입니다';return}
+    await setDoc(doc(db,'accounts',uid),{name,password:pw,createdAt:Date.now()});
+    alert(name+'님, 가입을 환영합니다!\n바로 로그인할게요.');
+    loginSuccess(uid,name);
+  }catch(e){errEl.textContent='오류: '+e.message}
+}
+window.doSignup=doSignup;
+
+// ── 로그아웃 ──
+window.doLogout=function(){
+  if(!confirm('로그아웃 하시겠습니까?'))return;
+  clearSession();
+  if(unsubRecs)unsubRecs();
+  if(unsubPeople)unsubPeople();
+  currentUid=null;cachedRecs=[];cachedPeople=[];
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('login-id').value='';
+  document.getElementById('login-pw').value='';
+  document.getElementById('login-error').textContent='';
+  showPage('dashboard');
 };
 
-// ── 사용자 목록 ──
-async function loadUserList(){
-  const snap=await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js').then(m=>m.getDocs(collection(db,'accounts')));
-  const list=document.getElementById('user-list');
+// ── 비번 변경 ──
+window.openChangePw=function(){document.getElementById('change-pw-popup').classList.add('active');document.getElementById('cp-old').value='';document.getElementById('cp-new').value='';document.getElementById('cp-new2').value='';document.getElementById('cp-error').textContent=''};
+window.closeChangePw=function(e){if(!e||e.target===document.getElementById('change-pw-popup'))document.getElementById('change-pw-popup').classList.remove('active')};
+window.doChangePw=async function(){
+  const old=document.getElementById('cp-old').value;
+  const nw=document.getElementById('cp-new').value;
+  const nw2=document.getElementById('cp-new2').value;
+  const errEl=document.getElementById('cp-error');
+  if(!old||!nw){errEl.textContent='모든 항목을 입력해주세요';return}
+  if(nw.length<4){errEl.textContent='비밀번호는 4자 이상이어야 해요';return}
+  if(nw!==nw2){errEl.textContent='비밀번호가 일치하지 않아요';return}
+  const snap=await getDoc(doc(db,'accounts',currentUid));
+  if(snap.data().password!==old){errEl.textContent='현재 비밀번호가 틀렸습니다';return}
+  await setDoc(doc(db,'accounts',currentUid),{password:nw},{merge:true});
+  document.getElementById('change-pw-popup').classList.remove('active');
+  alert('비밀번호가 변경됐습니다!');
+};
+
+// ── 마스터 진입 (버전 텍스트 5번 탭) ──
+window.masterTap=function(){
+  masterTapCount++;
+  if(masterTapTimer)clearTimeout(masterTapTimer);
+  masterTapTimer=setTimeout(()=>{masterTapCount=0},2000);
+  if(masterTapCount>=5){
+    masterTapCount=0;
+    document.getElementById('master-pw-input').value='';
+    document.getElementById('master-login-error').textContent='';
+    document.getElementById('master-login-popup').classList.add('active');
+  }
+};
+window.closeMasterLogin=function(e){if(!e||e.target===document.getElementById('master-login-popup'))document.getElementById('master-login-popup').classList.remove('active')};
+window.doMasterLogin=async function(){
+  const pw=document.getElementById('master-pw-input').value;
+  if(pw!==MASTER_PW){document.getElementById('master-login-error').textContent='비밀번호가 틀렸습니다';return}
+  document.getElementById('master-login-popup').classList.remove('active');
+  document.getElementById('master-screen').classList.add('active');
+  await loadMasterUserList();
+};
+window.closeMaster=function(){
+  document.getElementById('master-screen').classList.remove('active');
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('login-id').value='';
+  document.getElementById('login-pw').value='';
+};
+
+async function loadMasterUserList(){
+  const snap=await getDocs(collection(db,'accounts'));
+  const list=document.getElementById('master-user-list');
   if(snap.empty){list.innerHTML='<div class="empty">등록된 사용자가 없습니다</div>';return}
   list.innerHTML=snap.docs.map(d=>{
     const u=d.data();
     return`<div class="user-row">
-      <div>
-        <div style="font-size:14px;font-weight:600;">${u.name||d.id}</div>
-        <div style="font-size:12px;color:var(--text2);">아이디: ${d.id}</div>
-      </div>
-      <div style="display:flex;gap:6px;">
-        <button class="btn-sm" onclick="openResetPw('${d.id}','${u.name||d.id}')">비번초기화</button>
-        <button class="btn-danger" onclick="deleteUser('${d.id}')">삭제</button>
-      </div>
+      <div><div style="font-size:14px;font-weight:600;">${u.name||d.id}</div><div style="font-size:12px;color:var(--text2);">아이디: ${d.id}</div></div>
+      <button class="btn-danger" onclick="masterDeleteUser('${d.id}')">삭제</button>
     </div>`
   }).join('');
 }
-
-window.addUser=async function(){
-  const uid=document.getElementById('new-uid').value.trim();
-  const name=document.getElementById('new-name').value.trim();
-  const pw=document.getElementById('new-pw').value;
-  if(!uid||!name||!pw){alert('모든 항목을 입력해주세요');return}
+window.doMasterReset=async function(){
+  const uid=document.getElementById('reset-uid').value.trim();
+  const pw=document.getElementById('reset-newpw').value;
+  if(!uid||!pw){alert('아이디와 새 비밀번호를 입력해주세요');return}
   const snap=await getDoc(doc(db,'accounts',uid));
-  if(snap.exists()){alert('이미 존재하는 아이디입니다');return}
-  await setDoc(doc(db,'accounts',uid),{name,password:pw,createdAt:Date.now()});
-  document.getElementById('new-uid').value='';
-  document.getElementById('new-name').value='';
-  document.getElementById('new-pw').value='';
-  alert(name+'님 계정이 추가됐습니다!');
-  loadUserList();
+  if(!snap.exists()){alert('존재하지 않는 아이디입니다');return}
+  await setDoc(doc(db,'accounts',uid),{password:pw},{merge:true});
+  document.getElementById('reset-uid').value='';
+  document.getElementById('reset-newpw').value='';
+  alert(uid+'님 비밀번호가 초기화됐습니다!');
 };
-
-window.deleteUser=async function(uid){
-  if(!confirm(uid+' 계정을 삭제할까요?\n데이터도 모두 삭제됩니다.'))return;
+window.masterDeleteUser=async function(uid){
+  if(!confirm(uid+' 계정을 삭제할까요?'))return;
   await deleteDoc(doc(db,'accounts',uid));
   alert('삭제됐습니다');
-  loadUserList();
-};
-
-window.openResetPw=function(uid,name){
-  resetTargetUid=uid;
-  document.getElementById('reset-popup-title').textContent=name+' 비밀번호 초기화';
-  document.getElementById('reset-new-pw').value='';
-  document.getElementById('reset-popup').classList.add('active');
-};
-window.closeResetPopup=function(e){
-  if(!e||e.target===document.getElementById('reset-popup'))
-    document.getElementById('reset-popup').classList.remove('active');
-};
-window.doResetPw=async function(){
-  const pw=document.getElementById('reset-new-pw').value;
-  if(!pw){alert('새 비밀번호를 입력해주세요');return}
-  await setDoc(doc(db,'accounts',resetTargetUid),{password:pw},{merge:true});
-  document.getElementById('reset-popup').classList.remove('active');
-  alert('비밀번호가 초기화됐습니다!');
-};
-
-// ── 사용자 메뉴 ──
-window.showUserMenu=function(){
-  if(confirm(currentUserName+'님\n로그아웃 하시겠습니까?')){
-    currentUid=null;cachedRecs=[];cachedPeople=[];
-    document.getElementById('login-screen').classList.remove('hidden');
-    document.getElementById('login-id').value='';
-    document.getElementById('login-pw').value='';
-    document.getElementById('login-error').textContent='';
-  }
+  await loadMasterUserList();
 };
 
 // ── 데이터 리스닝 ──
 function listenData(){
-  onSnapshot(collection(db,'users',currentUid,'records'),snap=>{
+  unsubRecs=onSnapshot(collection(db,'users',currentUid,'records'),snap=>{
     cachedRecs=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderDashboard();renderCal();
   });
-  onSnapshot(collection(db,'users',currentUid,'people'),snap=>{
+  unsubPeople=onSnapshot(collection(db,'users',currentUid,'people'),snap=>{
     cachedPeople=snap.docs.map(d=>({id:d.id,...d.data()}));
     renderDashboard();renderPeople();
   });
 }
-
-async function saveRec(rec){
-  const id=rec.id||('r'+Date.now());
-  await setDoc(doc(db,'users',currentUid,'records',id),{...rec,id});
-}
+async function saveRec(rec){const id=rec.id||('r'+Date.now());await setDoc(doc(db,'users',currentUid,'records',id),{...rec,id})}
 async function delRec(id){await deleteDoc(doc(db,'users',currentUid,'records',id))}
-async function savePersonData(person){
-  const id=person.id||('p'+Date.now());
-  await setDoc(doc(db,'users',currentUid,'people',id),{...person,id});
-}
+async function savePersonData(person){const id=person.id||('p'+Date.now());await setDoc(doc(db,'users',currentUid,'people',id),{...person,id})}
 async function delPerson(id){await deleteDoc(doc(db,'users',currentUid,'people',id))}
 
 // ── 달력 ──
@@ -612,8 +694,7 @@ function initCal(){const now=new Date();calYear=now.getFullYear();calMonth=now.g
 window.calMove=function(d){calMonth+=d;if(calMonth>11){calMonth=0;calYear++}if(calMonth<0){calMonth=11;calYear--}renderCal()};
 window.selectDay=function(ds){selectedDate=ds;document.getElementById('selected-date-label').textContent=ds;renderCal()};
 function renderCal(){
-  const recDates=new Set(cachedRecs.map(r=>r.date));
-  const now=new Date();
+  const recDates=new Set(cachedRecs.map(r=>r.date)),now=new Date();
   document.getElementById('cal-title').textContent=calYear+'년 '+(calMonth+1)+'월';
   const dows=['일','월','화','수','목','금','토'];
   document.getElementById('cal-dow-row').innerHTML=dows.map((d,i)=>`<div class="cal-dow" style="${i===0?'color:var(--red)':i===6?'color:var(--blue)':''}">${d}</div>`).join('');
@@ -632,7 +713,8 @@ function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  document.getElementById('nav-'+id).classList.add('active');
+  const navEl=document.getElementById('nav-'+id);
+  if(navEl)navEl.classList.add('active');
   document.getElementById('main-content').scrollTop=0;
   if(id==='dashboard')renderDashboard();
   if(id==='add')renderCal();
@@ -646,8 +728,7 @@ function hideDetails(){document.querySelectorAll('.detail-page').forEach(p=>p.cl
 // ── 대시보드 ──
 function renderDashboard(){
   const now=new Date(),curKey=now.getFullYear()+'-'+pad(now.getMonth()+1);
-  const ms=sumMonth(cachedRecs,curKey);
-  const pct=Math.min(Math.round(ms.total/MONTHLY_MIN*100),100),diff=ms.total-MONTHLY_MIN;
+  const ms=sumMonth(cachedRecs,curKey),pct=Math.min(Math.round(ms.total/MONTHLY_MIN*100),100),diff=ms.total-MONTHLY_MIN;
   document.getElementById('d-total').textContent=fmtTime(ms.total);
   document.getElementById('d-bar').style.width=pct+'%';
   document.getElementById('d-service').textContent=fmtShort(ms.service);
@@ -660,8 +741,7 @@ function renderDashboard(){
   else{diffEl.textContent=fmtTime(-diff)+' 부족';diffEl.className='val red'}
   const sy=getServiceYear(now),sms=getServiceMonths(sy);
   let yt=0;sms.forEach(sm=>{yt+=sumMonth(cachedRecs,sm.year+'-'+pad(sm.month)).total});
-  const elapsed=sms.filter(sm=>new Date(sm.year,sm.month-1,1)<=now).length;
-  const ydiff=yt-(elapsed*MONTHLY_MIN);
+  const elapsed=sms.filter(sm=>new Date(sm.year,sm.month-1,1)<=now).length,ydiff=yt-(elapsed*MONTHLY_MIN);
   document.getElementById('d-yearly').textContent=fmtShort(yt);
   const ydEl=document.getElementById('d-yearly-diff');
   if(ydiff>=0){ydEl.textContent='+'+fmtShort(ydiff)+' 잉여';ydEl.className='val green'}
@@ -673,29 +753,16 @@ function renderDashboard(){
 
 // ── 보고서 ──
 function buildReportText(monthKey){
-  const ms=sumMonth(cachedRecs,monthKey);
-  const [y,m]=monthKey.split('-');
-  const rc=countResearchInMonth(monthKey);
-  return `📋 ${y}년 ${parseInt(m)}월 봉사 보고\n`+
-    `━━━━━━━━━━━━━━\n`+
-    `⏱ 총 봉사시간: ${fmtTime(ms.total)}\n`+
-    `  • 봉사: ${fmtTime(ms.service)}\n`+
-    (ms.ldc?`  • LDC: ${fmtTime(ms.ldc)}\n`:'')+
-    (ms.edu?`  • 학교: ${fmtTime(ms.edu)}\n`:'')+
-    (rc?`📚 연구: ${rc}건\n`:'')+
-    `━━━━━━━━━━━━━━`;
+  const ms=sumMonth(cachedRecs,monthKey),[y,m]=monthKey.split('-'),rc=countResearchInMonth(monthKey);
+  return`📋 ${y}년 ${parseInt(m)}월 봉사 보고\n━━━━━━━━━━━━━━\n⏱ 총 봉사시간: ${fmtTime(ms.total)}\n  • 봉사: ${fmtTime(ms.service)}\n`+(ms.ldc?`  • LDC: ${fmtTime(ms.ldc)}\n`:'')+(ms.edu?`  • 학교: ${fmtTime(ms.edu)}\n`:'')+(rc?`📚 연구: ${rc}건\n`:'')+`━━━━━━━━━━━━━━`;
 }
 window.shareMonthReport=function(){
-  const now=new Date(),key=now.getFullYear()+'-'+pad(now.getMonth()+1);
-  const text=buildReportText(key);
-  if(navigator.share){navigator.share({text})}
-  else{navigator.clipboard&&navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!\n카카오톡이나 문자에 붙여넣기 하세요.'))}
+  const now=new Date(),key=now.getFullYear()+'-'+pad(now.getMonth()+1),text=buildReportText(key);
+  if(navigator.share){navigator.share({text})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!\n카카오톡이나 문자에 붙여넣기 하세요.'))}
 };
 window.shareMonthReportFromPopup=function(){
-  if(!popupMonthKey)return;
-  const text=buildReportText(popupMonthKey);
-  if(navigator.share){navigator.share({text})}
-  else{navigator.clipboard&&navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!'))}
+  if(!popupMonthKey)return;const text=buildReportText(popupMonthKey);
+  if(navigator.share){navigator.share({text})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!'))}
 };
 
 // ── 기록 추가 ──
@@ -709,11 +776,11 @@ function resetTimeInputs(){
 }
 window.addRecord=async function(){
   if(!selectedDate){alert('날짜를 선택해주세요');return}
-  const serviceMin=toMin(+document.getElementById('f-service-h').value,+document.getElementById('f-service-m').value);
-  const ldcMin=toMin(+document.getElementById('f-ldc-h').value,+document.getElementById('f-ldc-m').value);
-  const eduMin=toMin(+document.getElementById('f-edu-h').value,+document.getElementById('f-edu-m').value);
-  if(serviceMin+ldcMin+eduMin===0){alert('최소 하나의 시간을 입력해주세요');return}
-  await saveRec({date:selectedDate,serviceMin,ldcMin,eduMin,ldcMemo:document.getElementById('f-ldc-memo').value,eduMemo:document.getElementById('f-edu-memo').value,memo:document.getElementById('f-memo').value,createdAt:Date.now()});
+  const sMin=toMin(+document.getElementById('f-service-h').value,+document.getElementById('f-service-m').value);
+  const lMin=toMin(+document.getElementById('f-ldc-h').value,+document.getElementById('f-ldc-m').value);
+  const eMin=toMin(+document.getElementById('f-edu-h').value,+document.getElementById('f-edu-m').value);
+  if(sMin+lMin+eMin===0){alert('최소 하나의 시간을 입력해주세요');return}
+  await saveRec({date:selectedDate,serviceMin:sMin,ldcMin:lMin,eduMin:eMin,ldcMemo:document.getElementById('f-ldc-memo').value,eduMemo:document.getElementById('f-edu-memo').value,memo:document.getElementById('f-memo').value,createdAt:Date.now()});
   resetTimeInputs();alert('저장되었습니다!');showPage('dashboard');
 };
 
@@ -747,71 +814,28 @@ window.renderRecords=function(){
     const dayTotal=dayRecs.reduce((a,r)=>a+recTotalMin(r),0);
     const recRows=dayRecs.map(r=>{
       const sMin=r.serviceMin||0,lMin=r.ldcMin||0,eMin=r.eduMin||0;
-      return`<div style="padding:10px 0;border-top:.5px solid var(--border);">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-          <div style="flex:1;">
-            ${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''}
-            ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''}
-            ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''}
-            ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}
-          </div>
-          <button class="btn-icon" onclick="deleteRecord('${r.id}')">
-            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
-          </button>
-        </div>
-      </div>`
+      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
     }).join('');
-    return`<div class="card" style="padding:0;overflow:hidden;margin-bottom:10px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);">
-        <div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:16px;font-weight:700;">${date.slice(5).replace('-','/')}</span><span style="font-size:13px;color:${dowColor};font-weight:600;">(${dow})</span></div>
-        <span style="font-size:15px;font-weight:700;color:var(--green);">${fmtTime(dayTotal)}</span>
-      </div>
-      <div style="padding:0 14px;">${recRows}</div>
-    </div>`
+    return`<div class="card" style="padding:0;overflow:hidden;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);"><div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:16px;font-weight:700;">${date.slice(5).replace('-','/')}</span><span style="font-size:13px;color:${dowColor};font-weight:600;">(${dow})</span></div><span style="font-size:15px;font-weight:700;color:var(--green);">${fmtTime(dayTotal)}</span></div><div style="padding:0 14px;">${recRows}</div></div>`
   }).join('');
 };
 window.deleteRecord=async function(id){if(!confirm('이 기록을 삭제할까요?'))return;await delRec(id);window.renderRecords()};
 
 // ── 연누계 ──
 function renderYearly(){
-  const now=new Date(),sy=getServiceYear(now),sms=getServiceMonths(sy);
-  let yt=0;
+  const now=new Date(),sy=getServiceYear(now),sms=getServiceMonths(sy);let yt=0;
   const rows=sms.map(sm=>{
     const key=sm.year+'-'+pad(sm.month),s=sumMonth(cachedRecs,key);yt+=s.total;
     const isFuture=new Date(sm.year,sm.month-1,1)>now,pct=Math.min(Math.round(s.total/MONTHLY_MIN*100),100);
-    return`<div class="yearly-row" onclick="openMonthPopup('${key}')">
-      <span style="font-size:13px;min-width:30px;">${sm.month}월</span>
-      <div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><div style="height:100%;background:var(--green);border-radius:3px;width:${isFuture?0:pct}%"></div></div>
-      <span style="font-size:13px;font-weight:600;min-width:64px;text-align:right;">${isFuture?'-':fmtTime(s.total)}</span>
-      <svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>`
+    return`<div class="yearly-row" onclick="openMonthPopup('${key}')"><span style="font-size:13px;min-width:30px;">${sm.month}월</span><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><div style="height:100%;background:var(--green);border-radius:3px;width:${isFuture?0:pct}%"></div></div><span style="font-size:13px;font-weight:600;min-width:64px;text-align:right;">${isFuture?'-':fmtTime(s.total)}</span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`
   }).join('');
-  document.getElementById('yearly-list').innerHTML=`
-    <div class="card" style="margin-bottom:12px;">
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;color:var(--text2);">${sy}~${sy+1} 연도 누계</span>
-        <span style="font-size:17px;font-weight:600;">${fmtTime(yt)} / 600시간</span>
-      </div>
-      <div class="prog" style="margin-top:8px;"><div class="prog-fill" style="width:${Math.min(Math.round(yt/YEARLY_MIN*100),100)}%"></div></div>
-    </div>
-    <div class="card" style="padding:8px 14px;">${rows}</div>`;
+  document.getElementById('yearly-list').innerHTML=`<div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12px;color:var(--text2);">${sy}~${sy+1} 연도 누계</span><span style="font-size:17px;font-weight:600;">${fmtTime(yt)} / 600시간</span></div><div class="prog" style="margin-top:8px;"><div class="prog-fill" style="width:${Math.min(Math.round(yt/YEARLY_MIN*100),100)}%"></div></div></div><div class="card" style="padding:8px 14px;">${rows}</div>`;
 }
-
 window.openMonthPopup=function(key){
-  popupMonthKey=key;
-  const[y,m]=key.split('-');
-  document.getElementById('popup-month-title').textContent=y+'년 '+parseInt(m)+'월 상세';
-  const ms=sumMonth(cachedRecs,key),rc=countResearchInMonth(key),diff=ms.total-MONTHLY_MIN;
+  popupMonthKey=key;const[y,m]=key.split('-'),ms=sumMonth(cachedRecs,key),rc=countResearchInMonth(key),diff=ms.total-MONTHLY_MIN;
   const diffStr=diff>=0?`<span class="green">+${fmtTime(diff)} 잉여</span>`:`<span class="red">${fmtTime(-diff)} 부족</span>`;
-  document.getElementById('popup-month-content').innerHTML=`
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-      <div class="metric"><div class="label">총 봉사시간</div><div class="val">${fmtTime(ms.total)}</div></div>
-      <div class="metric"><div class="label">봉사</div><div class="val">${fmtTime(ms.service)}</div></div>
-      <div class="metric"><div class="label">LDC</div><div class="val">${fmtTime(ms.ldc)}</div></div>
-      <div class="metric"><div class="label">학교</div><div class="val">${fmtTime(ms.edu)}</div></div>
-      ${rc?`<div class="metric"><div class="label">연구</div><div class="val">${rc}건</div></div>`:''}
-      <div class="metric"><div class="label">목표대비</div><div class="val" style="font-size:16px;">${diffStr}</div></div>
-    </div>`;
+  document.getElementById('popup-month-title').textContent=y+'년 '+parseInt(m)+'월 상세';
+  document.getElementById('popup-month-content').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;"><div class="metric"><div class="label">총 봉사시간</div><div class="val">${fmtTime(ms.total)}</div></div><div class="metric"><div class="label">봉사</div><div class="val">${fmtTime(ms.service)}</div></div><div class="metric"><div class="label">LDC</div><div class="val">${fmtTime(ms.ldc)}</div></div><div class="metric"><div class="label">학교</div><div class="val">${fmtTime(ms.edu)}</div></div>${rc?`<div class="metric"><div class="label">연구</div><div class="val">${rc}건</div></div>`:''}<div class="metric"><div class="label">목표대비</div><div class="val" style="font-size:16px;">${diffStr}</div></div></div>`;
   document.getElementById('month-popup').classList.add('active');
 };
 window.closeMonthPopup=function(e){if(!e||e.target===document.getElementById('month-popup'))document.getElementById('month-popup').classList.remove('active')};
@@ -820,40 +844,18 @@ window.closeMonthPopup=function(e){if(!e||e.target===document.getElementById('mo
 let peopleFilter='all',currentPersonId=null,editPersonId=null;
 window.setFilter=function(btn){peopleFilter=btn.dataset.filter;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPeople()};
 function renderPeople(){
-  const q=(document.getElementById('people-search').value||'').toLowerCase();
-  const sort=document.getElementById('people-sort').value;
-  let filtered=cachedPeople.filter(p=>{
-    if(peopleFilter!=='all'&&p.type!==peopleFilter)return false;
-    if(q&&!p.name.toLowerCase().includes(q)&&!(p.address||'').toLowerCase().includes(q)&&!(p.dong||'').includes(q))return false;
-    return true;
-  });
-  filtered.sort((a,b)=>{
-    if(sort==='name')return a.name.localeCompare(b.name);
-    if(sort==='dong')return(a.dong||'').localeCompare(b.dong||'');
-    if(sort==='recent'){const la=(a.visits||[]).length?a.visits[a.visits.length-1].date:'0';const lb=(b.visits||[]).length?b.visits[b.visits.length-1].date:'0';return lb.localeCompare(la)}
-    if(sort==='count')return(b.visits||[]).length-(a.visits||[]).length;
-    return 0;
-  });
+  const q=(document.getElementById('people-search').value||'').toLowerCase(),sort=document.getElementById('people-sort').value;
+  let filtered=cachedPeople.filter(p=>{if(peopleFilter!=='all'&&p.type!==peopleFilter)return false;if(q&&!p.name.toLowerCase().includes(q)&&!(p.address||'').toLowerCase().includes(q)&&!(p.dong||'').includes(q))return false;return true});
+  filtered.sort((a,b)=>{if(sort==='name')return a.name.localeCompare(b.name);if(sort==='dong')return(a.dong||'').localeCompare(b.dong||'');if(sort==='recent'){const la=(a.visits||[]).length?a.visits[a.visits.length-1].date:'0';const lb=(b.visits||[]).length?b.visits[b.visits.length-1].date:'0';return lb.localeCompare(la)}if(sort==='count')return(b.visits||[]).length-(a.visits||[]).length;return 0});
   const list=document.getElementById('people-list');
   if(!filtered.length){list.innerHTML='<div class="empty">등록된 관심자가 없습니다</div>';return}
   list.innerHTML=filtered.map(p=>{
-    const gc=p.gender==='여'?'f':p.gender==='남'?'m':'n';
-    const vcount=(p.visits||[]).length,lastVisit=vcount?p.visits[vcount-1].date:'없음';
+    const gc=p.gender==='여'?'f':p.gender==='남'?'m':'n',vcount=(p.visits||[]).length,lastVisit=vcount?p.visits[vcount-1].date:'없음';
     const typeBadge=p.type==='연구'?'<span class="badge b-research">연구</span>':'<span class="badge b-visit">재방</span>';
     const gBadge=p.gender?`<span class="badge ${gc==='f'?'b-f':'b-m'}">${p.gender}</span>`:'';
-    return`<div class="person-card" onclick="showPersonDetail('${p.id}')">
-      <div class="avatar ${gc}">${p.name.slice(-2)}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;flex-wrap:wrap;">
-          <span style="font-size:15px;font-weight:600;">${p.name}</span>${gBadge}${p.age?`<span style="font-size:12px;color:var(--text2);">${p.age}세</span>`:''}${typeBadge}
-        </div>
-        <div style="font-size:12px;color:var(--text2);">${p.dong?p.dong+' · ':''}방문 ${vcount}회 · 최근 ${lastVisit}</div>
-      </div>
-      <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>`
+    return`<div class="person-card" onclick="showPersonDetail('${p.id}')"><div class="avatar ${gc}">${p.name.slice(-2)}</div><div style="flex:1;min-width:0;"><div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;flex-wrap:wrap;"><span style="font-size:15px;font-weight:600;">${p.name}</span>${gBadge}${p.age?`<span style="font-size:12px;color:var(--text2);">${p.age}세</span>`:''}${typeBadge}</div><div style="font-size:12px;color:var(--text2);">${p.dong?p.dong+' · ':''}방문 ${vcount}회 · 최근 ${lastVisit}</div></div><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`
   }).join('');
 }
-
 window.showPersonDetail=function(id){
   currentPersonId=id;const p=cachedPeople.find(x=>x.id===id);if(!p)return;
   hideDetails();document.getElementById('page-person-detail').classList.add('active');
@@ -863,8 +865,7 @@ window.showPersonDetail=function(id){
   renderVisitHistory(p);
 };
 function renderVisitHistory(p){
-  const visits=(p.visits||[]).slice().reverse();
-  const el=document.getElementById('visit-history');
+  const visits=(p.visits||[]).slice().reverse(),el=document.getElementById('visit-history');
   if(!visits.length){el.innerHTML='<div class="empty">방문 이력이 없습니다</div>';return}
   el.innerHTML=`<div class="card">${visits.map((v,ri)=>{const realIdx=p.visits.length-1-ri;return`<div class="hist-item"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;font-weight:600;">${v.date}</span><span class="badge ${v.type==='연구'?'b-research':'b-visit'}">${v.type||'재방'}</span><span style="font-size:12px;color:var(--text3);">${realIdx+1}회차</span></div><button class="btn-icon" onclick="deleteVisit('${p.id}',${realIdx})"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>${v.content?`<div style="font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5;">${v.content}</div>`:''}</div>`}).join('')}</div>`
 }
@@ -908,6 +909,20 @@ window.deleteVisit=async function(personId,visitIdx){
 // ── 초기화 ──
 buildTimeSelects();
 initCal();
+
+// 자동 로그인 시도
+const session=loadSession();
+if(session){
+  // Firebase에서 계정 유효성 확인 후 자동 로그인
+  getDoc(doc(db,'accounts',session.uid)).then(snap=>{
+    if(snap.exists()){loginSuccess(session.uid,snap.data().name||session.uid)}
+    else{clearSession()}
+  }).catch(()=>clearSession());
+}
+
+// Enter 키 지원
+document.getElementById('login-pw').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+document.getElementById('signup-pw2').addEventListener('keydown',e=>{if(e.key==='Enter')doSignup()});
 </script>
 </body>
 </html>
