@@ -149,8 +149,8 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
   <div class="screen-title">파이오니아 봉사기록</div>
   <div class="screen-sub" id="auth-sub">로그인하여 봉사 기록을 관리하세요</div>
   <div class="tab-row">
-    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">로그인</button>
-    <button class="tab-btn" id="tab-signup" onclick="switchTab('signup')">회원가입</button>
+    <button class="tab-btn active" id="tab-login" onclick="window.switchTab('login')">로그인</button>
+    <button class="tab-btn" id="tab-signup" onclick="window.switchTab('signup')">회원가입</button>
   </div>
 
   <!-- 로그인 -->
@@ -158,7 +158,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     <div class="input-group"><label>아이디</label><input type="text" id="login-id" placeholder="아이디" autocomplete="username"></div>
     <div class="input-group"><label>비밀번호</label><input type="password" id="login-pw" placeholder="비밀번호" autocomplete="current-password"></div>
     <div class="error-msg" id="login-error"></div>
-    <button class="btn-main" onclick="doLogin()">로그인</button>
+    <button class="btn-main" onclick="window.doLogin()">로그인</button>
   </div>
 
   <!-- 회원가입 -->
@@ -168,7 +168,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     <div class="input-group"><label>비밀번호</label><input type="password" id="signup-pw" placeholder="비밀번호" autocomplete="new-password"></div>
     <div class="input-group"><label>비밀번호 확인</label><input type="password" id="signup-pw2" placeholder="비밀번호 확인"></div>
     <div class="error-msg" id="signup-error"></div>
-    <button class="btn-main" onclick="doSignup()">가입하기</button>
+    <button class="btn-main" onclick="window.doSignup()">가입하기</button>
   </div>
 </div>
 
@@ -521,8 +521,7 @@ function loadSession(){
 function clearSession(){localStorage.removeItem('p_session')}
 
 // ── 탭 전환 ──
-window.switchTab=function(tab){
-  document.getElementById('tab-login').classList.toggle('active',tab==='login');
+window.switchTab=function(tab){  document.getElementById('tab-login').classList.toggle('active',tab==='login');
   document.getElementById('tab-signup').classList.toggle('active',tab==='signup');
   document.getElementById('login-form').style.display=tab==='login'?'block':'none';
   document.getElementById('signup-form').style.display=tab==='signup'?'block':'none';
