@@ -243,7 +243,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
         </div>
         <div class="metric"><div class="label">봉사시간</div><div class="val" id="d-service">0h</div></div>
         <div class="metric"><div class="label">LDC 시간</div><div class="val" id="d-ldc">0h</div></div>
-        <div class="metric"><div class="label">학교(교육)</div><div class="val" id="d-edu">0h</div></div>
+        <div class="metric"><div class="label">P학교</div><div class="val" id="d-edu">0h</div></div>
         <div class="metric"><div class="label">연구 중인 관심자</div><div class="val" id="d-study">0</div><div class="sub">명 (중복제외)</div></div>
         <div class="metric full"><div class="label">이달 부족/잉여</div><div class="val" id="d-diff">-</div></div>
       </div>
@@ -287,10 +287,10 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
           <div class="time-input"><select id="f-ldc-h"></select><span class="time-sep">시간</span><select id="f-ldc-m"></select><span class="time-sep">분</span></div>
         </div>
         <div class="form-row"><label>LDC 메모</label><input type="text" id="f-ldc-memo" placeholder="LDC 내용 메모"></div>
-        <div class="form-row"><label>학교(교육) 시간</label>
+        <div class="form-row"><label>P학교 시간</label>
           <div class="time-input"><select id="f-edu-h"></select><span class="time-sep">시간</span><select id="f-edu-m"></select><span class="time-sep">분</span></div>
         </div>
-        <div class="form-row"><label>교육 메모</label><input type="text" id="f-edu-memo" placeholder="교육 메모"></div>
+        <div class="form-row"><label>P학교 메모</label><input type="text" id="f-edu-memo" placeholder="P학교 메모"></div>
         <div class="form-row"><label>메모</label><textarea id="f-memo" placeholder="기타 메모..."></textarea></div>
         <button class="btn-primary" onclick="addRecord()">저장</button>
       </div>
@@ -308,7 +308,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
           <div><span style="font-size:11px;color:var(--text2);">총시간</span><div id="ms-total" style="font-size:16px;font-weight:700;"></div></div>
           <div><span style="font-size:11px;color:var(--text2);">봉사</span><div id="ms-service" style="font-size:16px;font-weight:700;"></div></div>
           <div><span style="font-size:11px;color:var(--text2);">LDC</span><div id="ms-ldc" style="font-size:15px;font-weight:600;"></div></div>
-          <div><span style="font-size:11px;color:var(--text2);">학교</span><div id="ms-edu" style="font-size:15px;font-weight:600;"></div></div>
+          <div><span style="font-size:11px;color:var(--text2);">P학교</span><div id="ms-edu" style="font-size:15px;font-weight:600;"></div></div>
           <div><span style="font-size:11px;color:var(--text2);">목표대비</span><div id="ms-diff" style="font-size:15px;font-weight:600;"></div></div>
         </div>
       </div>
@@ -752,9 +752,25 @@ function renderDashboard(){
 }
 
 // ── 보고서 ──
+function countResearchTotal(monthKey){
+  // 해당 월 이전 포함, 연구로 등록된 관심자 수 (중복 제거)
+  // 연구 형식인 관심자는 첫방문부터 연구건수로 카운트
+  return cachedPeople.filter(p=>p.type==='연구').length;
+}
 function buildReportText(monthKey){
-  const ms=sumMonth(cachedRecs,monthKey),[y,m]=monthKey.split('-'),rc=countResearchInMonth(monthKey);
-  return`📋 ${y}년 ${parseInt(m)}월 봉사 보고\n━━━━━━━━━━━━━━\n⏱ 총 봉사시간: ${fmtTime(ms.total)}\n  • 봉사: ${fmtTime(ms.service)}\n`+(ms.ldc?`  • LDC: ${fmtTime(ms.ldc)}\n`:'')+(ms.edu?`  • 학교: ${fmtTime(ms.edu)}\n`:'')+(rc?`📚 연구: ${rc}건\n`:'')+`━━━━━━━━━━━━━━`;
+  const ms=sumMonth(cachedRecs,monthKey),[y,m]=monthKey.split('-');
+  const rc=cachedPeople.filter(p=>p.type==='연구').length;
+  const consideration=ms.ldc+ms.edu;
+  let text=`📋 ${y}년 ${parseInt(m)}월 봉사 보고\n━━━━━━━━━━━━━━\n`;
+  text+=`⏱ 총 봉사시간: ${fmtTime(ms.service)}\n`;
+  if(consideration>0){
+    text+=`📖 총 고려시간: ${fmtTime(consideration)}\n`;
+    if(ms.ldc)text+=`  • LDC: ${fmtTime(ms.ldc)}\n`;
+    if(ms.edu)text+=`  • P학교: ${fmtTime(ms.edu)}\n`;
+  }
+  if(rc)text+=`📚 연구: ${rc}건\n`;
+  text+=`━━━━━━━━━━━━━━`;
+  return text;
 }
 window.shareMonthReport=function(){
   const now=new Date(),key=now.getFullYear()+'-'+pad(now.getMonth()+1),text=buildReportText(key);
@@ -814,7 +830,7 @@ window.renderRecords=function(){
     const dayTotal=dayRecs.reduce((a,r)=>a+recTotalMin(r),0);
     const recRows=dayRecs.map(r=>{
       const sMin=r.serviceMin||0,lMin=r.ldcMin||0,eMin=r.eduMin||0;
-      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
+      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">P학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
     }).join('');
     return`<div class="card" style="padding:0;overflow:hidden;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);"><div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:16px;font-weight:700;">${date.slice(5).replace('-','/')}</span><span style="font-size:13px;color:${dowColor};font-weight:600;">(${dow})</span></div><span style="font-size:15px;font-weight:700;color:var(--green);">${fmtTime(dayTotal)}</span></div><div style="padding:0 14px;">${recRows}</div></div>`
   }).join('');
@@ -835,7 +851,7 @@ window.openMonthPopup=function(key){
   popupMonthKey=key;const[y,m]=key.split('-'),ms=sumMonth(cachedRecs,key),rc=countResearchInMonth(key),diff=ms.total-MONTHLY_MIN;
   const diffStr=diff>=0?`<span class="green">+${fmtTime(diff)} 잉여</span>`:`<span class="red">${fmtTime(-diff)} 부족</span>`;
   document.getElementById('popup-month-title').textContent=y+'년 '+parseInt(m)+'월 상세';
-  document.getElementById('popup-month-content').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;"><div class="metric"><div class="label">총 봉사시간</div><div class="val">${fmtTime(ms.total)}</div></div><div class="metric"><div class="label">봉사</div><div class="val">${fmtTime(ms.service)}</div></div><div class="metric"><div class="label">LDC</div><div class="val">${fmtTime(ms.ldc)}</div></div><div class="metric"><div class="label">학교</div><div class="val">${fmtTime(ms.edu)}</div></div>${rc?`<div class="metric"><div class="label">연구</div><div class="val">${rc}건</div></div>`:''}<div class="metric"><div class="label">목표대비</div><div class="val" style="font-size:16px;">${diffStr}</div></div></div>`;
+  document.getElementById('popup-month-content').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;"><div class="metric"><div class="label">총 봉사시간</div><div class="val">${fmtTime(ms.total)}</div></div><div class="metric"><div class="label">봉사</div><div class="val">${fmtTime(ms.service)}</div></div><div class="metric"><div class="label">LDC</div><div class="val">${fmtTime(ms.ldc)}</div></div><div class="metric"><div class="label">P학교</div><div class="val">${fmtTime(ms.edu)}</div></div>${rc?`<div class="metric"><div class="label">연구</div><div class="val">${rc}건</div></div>`:''}<div class="metric"><div class="label">목표대비</div><div class="val" style="font-size:16px;">${diffStr}</div></div></div>`;
   document.getElementById('month-popup').classList.add('active');
 };
 window.closeMonthPopup=function(e){if(!e||e.target===document.getElementById('month-popup'))document.getElementById('month-popup').classList.remove('active')};
