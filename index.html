@@ -758,26 +758,20 @@ function countResearchTotal(monthKey){
   return cachedPeople.filter(p=>p.type==='연구').length;
 }
 function buildReportText(monthKey){
-  const ms=sumMonth(cachedRecs,monthKey),[y,m]=monthKey.split('-');
+  const ms=sumMonth(cachedRecs,monthKey);
+  const y=monthKey.split('-')[0],m=parseInt(monthKey.split('-')[1]);
   const rc=cachedPeople.filter(p=>p.type==='연구').length;
   const consideration=ms.ldc+ms.edu;
-  let text='📋 '+y+'년 '+parseInt(m)+'월 봉사 보고
-━━━━━━━━━━━━━━
-';
-  text+='⏱ 총 봉사시간: '+fmtTime(ms.service)+'
-';
+  var R='\n';
+  var text='[봉사보고] '+y+'년 '+m+'월'+R;
+  text+='총 봉사시간: '+fmtTime(ms.service)+R;
   if(consideration>0){
-    text+='📖 총 고려시간: '+fmtTime(consideration)+'
-';
-    if(ms.ldc)text+='  · LDC: '+fmtTime(ms.ldc)+'
-';
-    if(ms.edu)text+='  · P학교: '+fmtTime(ms.edu)+'
-';
+    text+='총 고려시간: '+fmtTime(consideration)+R;
+    if(ms.ldc)text+='  LDC: '+fmtTime(ms.ldc)+R;
+    if(ms.edu)text+='  P학교: '+fmtTime(ms.edu)+R;
   }
-  if(rc)text+='📚 연구: '+rc+'건
-';
-  text+='━━━━━━━━━━━━━━';
-  return text;
+  if(rc)text+='연구: '+rc+'건'+R;
+  return text.trim();
 }
 window.shareMonthReport=function(){
   const now=new Date(),key=now.getFullYear()+'-'+pad(now.getMonth()+1),text=buildReportText(key);
