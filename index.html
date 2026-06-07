@@ -761,15 +761,22 @@ function buildReportText(monthKey){
   const ms=sumMonth(cachedRecs,monthKey),[y,m]=monthKey.split('-');
   const rc=cachedPeople.filter(p=>p.type==='연구').length;
   const consideration=ms.ldc+ms.edu;
-  let text=`📋 ${y}년 ${parseInt(m)}월 봉사 보고\n━━━━━━━━━━━━━━\n`;
-  text+=`⏱ 총 봉사시간: ${fmtTime(ms.service)}\n`;
+  let text='📋 '+y+'년 '+parseInt(m)+'월 봉사 보고
+━━━━━━━━━━━━━━
+';
+  text+='⏱ 총 봉사시간: '+fmtTime(ms.service)+'
+';
   if(consideration>0){
-    text+=`📖 총 고려시간: ${fmtTime(consideration)}\n`;
-    if(ms.ldc)text+=`  • LDC: ${fmtTime(ms.ldc)}\n`;
-    if(ms.edu)text+=`  • P학교: ${fmtTime(ms.edu)}\n`;
+    text+='📖 총 고려시간: '+fmtTime(consideration)+'
+';
+    if(ms.ldc)text+='  · LDC: '+fmtTime(ms.ldc)+'
+';
+    if(ms.edu)text+='  · P학교: '+fmtTime(ms.edu)+'
+';
   }
-  if(rc)text+=`📚 연구: ${rc}건\n`;
-  text+=`━━━━━━━━━━━━━━`;
+  if(rc)text+='📚 연구: '+rc+'건
+';
+  text+='━━━━━━━━━━━━━━';
   return text;
 }
 window.shareMonthReport=function(){
