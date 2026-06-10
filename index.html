@@ -173,15 +173,15 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 </div>
 
 <!-- 마스터 로그인 팝업 -->
-<div class="popup-overlay" id="master-login-popup" onclick="closeMasterLogin(event)">
+<div class="popup-overlay" id="master-login-popup" onclick="window.closeMasterLogin(event)">
   <div class="popup">
     <div class="popup-title">
       <span>마스터 로그인</span>
-      <button onclick="closeMasterLogin()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
+      <button onclick="window.closeMasterLogin()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
     </div>
     <div class="form-row"><label>마스터 비밀번호</label><input type="password" id="master-pw-input" placeholder="비밀번호"></div>
     <div class="error-msg" id="master-login-error"></div>
-    <button class="btn-primary" onclick="doMasterLogin()">로그인</button>
+    <button class="btn-primary" onclick="window.doMasterLogin()">로그인</button>
   </div>
 </div>
 
@@ -189,13 +189,13 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 <div id="master-screen" class="master-screen">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
     <h2 style="font-size:18px;font-weight:700;">⚙️ 마스터 관리</h2>
-    <button class="btn-sm" onclick="closeMaster()">닫기</button>
+    <button class="btn-sm" onclick="window.closeMaster()">닫기</button>
   </div>
   <div class="card" style="margin-bottom:16px;">
     <div style="font-size:14px;font-weight:600;margin-bottom:12px;">사용자 비밀번호 초기화</div>
     <div class="form-row"><label>아이디</label><input type="text" id="reset-uid" placeholder="초기화할 아이디"></div>
     <div class="form-row"><label>새 비밀번호</label><input type="password" id="reset-newpw" placeholder="새 비밀번호"></div>
-    <button class="btn-primary" onclick="doMasterReset()">비밀번호 초기화</button>
+    <button class="btn-primary" onclick="window.doMasterReset()">비밀번호 초기화</button>
   </div>
   <div class="card">
     <div style="font-size:14px;font-weight:600;margin-bottom:12px;">전체 사용자 목록</div>
@@ -204,17 +204,17 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 </div>
 
 <!-- 비번 변경 팝업 -->
-<div class="popup-overlay" id="change-pw-popup" onclick="closeChangePw(event)">
+<div class="popup-overlay" id="change-pw-popup" onclick="window.closeChangePw(event)">
   <div class="popup">
     <div class="popup-title">
       <span>비밀번호 변경</span>
-      <button onclick="closeChangePw()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
+      <button onclick="window.closeChangePw()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
     </div>
     <div class="form-row"><label>현재 비밀번호</label><input type="password" id="cp-old" placeholder="현재 비밀번호"></div>
     <div class="form-row"><label>새 비밀번호</label><input type="password" id="cp-new" placeholder="새 비밀번호"></div>
     <div class="form-row"><label>새 비밀번호 확인</label><input type="password" id="cp-new2" placeholder="새 비밀번호 확인"></div>
     <div class="error-msg" id="cp-error"></div>
-    <button class="btn-primary" onclick="doChangePw()">변경</button>
+    <button class="btn-primary" onclick="window.doChangePw()">변경</button>
   </div>
 </div>
 
@@ -247,7 +247,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
         <div class="metric"><div class="label">연구 중인 관심자</div><div class="val" id="d-study">0</div><div class="sub">명 (중복제외)</div></div>
         <div class="metric full"><div class="label">이달 부족/잉여</div><div class="val" id="d-diff">-</div></div>
       </div>
-      <button class="btn-share" onclick="shareMonthReport()">
+      <button class="btn-share" onclick="window.shareMonthReport()">
         <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
         당월 보고서 공유
       </button>
@@ -268,9 +268,9 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
       <div class="sec-title">봉사 기록 추가</div>
       <div class="cal-wrap">
         <div class="cal-header">
-          <button class="cal-nav" onclick="calMove(-1)">‹</button>
+          <button class="cal-nav" onclick="window.calMove(-1)">‹</button>
           <span id="cal-title"></span>
-          <button class="cal-nav" onclick="calMove(1)">›</button>
+          <button class="cal-nav" onclick="window.calMove(1)">›</button>
         </div>
         <div class="cal-grid" id="cal-dow-row"></div>
         <div class="cal-grid" id="cal-body"></div>
@@ -292,7 +292,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
         </div>
         <div class="form-row"><label>P학교 메모</label><input type="text" id="f-edu-memo" placeholder="P학교 메모"></div>
         <div class="form-row"><label>메모</label><textarea id="f-memo" placeholder="기타 메모..."></textarea></div>
-        <button class="btn-primary" onclick="addRecord()">저장</button>
+        <button class="btn-primary" onclick="window.addRecord()">저장</button>
       </div>
     </div>
 
@@ -300,7 +300,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     <div id="page-records" class="page">
       <div class="sec-title">
         <span>월별 기록</span>
-        <select id="month-select" class="sort-sel" onchange="renderRecords()"></select>
+        <select id="month-select" class="sort-sel" onchange="window.renderRecords()"></select>
       </div>
       <div id="month-summary" style="display:none;background:var(--bg2);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
         <div style="font-size:11px;color:var(--text2);margin-bottom:6px;">월 합계</div>
@@ -325,17 +325,17 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     <div id="page-people" class="page">
       <div class="sec-title">
         <span>관심자 관리</span>
-        <button class="btn-sm" onclick="showPersonForm(null)">+ 추가</button>
+        <button class="btn-sm" onclick="window.showPersonForm(null)">+ 추가</button>
       </div>
-      <input type="text" class="search-bar" placeholder="이름, 주소, 구역 검색..." oninput="renderPeople()" id="people-search">
+      <input type="text" class="search-bar" placeholder="이름, 주소, 구역 검색..." oninput="window.renderPeople()" id="people-search">
       <div class="filter-row">
-        <button class="filter-btn on" data-filter="all" onclick="setFilter(this)">전체</button>
-        <button class="filter-btn" data-filter="재방" onclick="setFilter(this)">재방</button>
-        <button class="filter-btn" data-filter="연구" onclick="setFilter(this)">연구</button>
+        <button class="filter-btn on" data-filter="all" onclick="window.setFilter(this)">전체</button>
+        <button class="filter-btn" data-filter="재방" onclick="window.setFilter(this)">재방</button>
+        <button class="filter-btn" data-filter="연구" onclick="window.setFilter(this)">연구</button>
       </div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
         <span style="font-size:12px;color:var(--text2);">정렬</span>
-        <select class="sort-sel" id="people-sort" onchange="renderPeople()">
+        <select class="sort-sel" id="people-sort" onchange="window.renderPeople()">
           <option value="name">이름순</option>
           <option value="dong">구역(동)순</option>
           <option value="recent">최근 방문순</option>
@@ -355,11 +355,11 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
             <div style="font-size:12px;color:var(--text2);" id="settings-uid">-</div>
           </div>
         </div>
-        <div class="setting-row" style="cursor:pointer;" onclick="openChangePw()">
+        <div class="setting-row" style="cursor:pointer;" onclick="window.openChangePw()">
           <span style="font-size:14px;">비밀번호 변경</span>
           <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
         </div>
-        <div class="setting-row" style="cursor:pointer;" onclick="doLogout()">
+        <div class="setting-row" style="cursor:pointer;" onclick="window.doLogout()">
           <span style="font-size:14px;color:var(--red);">로그아웃</span>
           <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </div>
@@ -393,16 +393,16 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 <!-- 인물 상세 -->
 <div id="page-person-detail" class="detail-page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-    <button class="back-btn" onclick="backToPeople()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>목록</button>
+    <button class="back-btn" onclick="window.backToPeople()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>목록</button>
     <div style="display:flex;gap:8px;">
-      <button class="btn-sm" onclick="editPerson()">수정</button>
-      <button class="btn-sm" style="color:var(--red)" onclick="deletePerson()">삭제</button>
+      <button class="btn-sm" onclick="window.editPerson()">수정</button>
+      <button class="btn-sm" style="color:var(--red)" onclick="window.deletePerson()">삭제</button>
     </div>
   </div>
   <div id="person-detail-content"></div>
   <div style="display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px;">
     <span style="font-size:13px;font-weight:600;">방문 이력</span>
-    <button class="btn-sm" onclick="showVisitForm()">+ 기록 추가</button>
+    <button class="btn-sm" onclick="window.showVisitForm()">+ 기록 추가</button>
   </div>
   <div id="visit-history"></div>
 </div>
@@ -410,7 +410,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 <!-- 인물 추가/수정 -->
 <div id="page-person-form" class="detail-page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-    <button class="back-btn" onclick="cancelPersonForm()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>취소</button>
+    <button class="back-btn" onclick="window.cancelPersonForm()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>취소</button>
     <span style="font-size:15px;font-weight:600;" id="person-form-title">관심자 추가</span>
     <div style="width:40px"></div>
   </div>
@@ -428,14 +428,14 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     </div>
     <div class="form-row"><label>첫 방문 날짜</label><input type="date" id="pf-firstdate"></div>
     <div class="form-row"><label>메모</label><textarea id="pf-memo" placeholder="관심 주제, 특이사항..."></textarea></div>
-    <button class="btn-primary" onclick="savePerson()">저장</button>
+    <button class="btn-primary" onclick="window.savePerson()">저장</button>
   </div>
 </div>
 
 <!-- 방문 기록 폼 -->
 <div id="page-visit-form" class="detail-page">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-    <button class="back-btn" onclick="cancelVisitForm()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>취소</button>
+    <button class="back-btn" onclick="window.cancelVisitForm()"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>취소</button>
     <span style="font-size:15px;font-weight:600;" id="visit-form-title">방문 기록 추가</span>
     <div style="width:40px"></div>
   </div>
@@ -443,19 +443,19 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     <div class="form-row"><label>날짜 *</label><input type="date" id="vf-date"></div>
     <div class="form-row"><label>방문 형식</label><select id="vf-type"><option value="재방">재방</option><option value="연구">연구</option></select></div>
     <div class="form-row"><label>내용 / 메모</label><textarea id="vf-content" placeholder="대화 내용, 나눈 자료, 반응 등..."></textarea></div>
-    <button class="btn-primary" onclick="saveVisit()">저장</button>
+    <button class="btn-primary" onclick="window.saveVisit()">저장</button>
   </div>
 </div>
 
 <!-- 월별 상세 팝업 -->
-<div class="popup-overlay" id="month-popup" onclick="closeMonthPopup(event)">
+<div class="popup-overlay" id="month-popup" onclick="window.closeMonthPopup(event)">
   <div class="popup">
     <div class="popup-title">
       <span id="popup-month-title">월 상세</span>
-      <button onclick="closeMonthPopup()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
+      <button onclick="window.closeMonthPopup()" style="background:none;border:none;cursor:pointer;font-size:20px;color:var(--text2);">×</button>
     </div>
     <div id="popup-month-content"></div>
-    <button class="btn-share" onclick="shareMonthReportFromPopup()">
+    <button class="btn-share" onclick="window.shareMonthReportFromPopup()">
       <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
       이 달 보고서 공유
     </button>
@@ -830,7 +830,7 @@ window.renderRecords=function(){
     const dayTotal=dayRecs.reduce((a,r)=>a+recTotalMin(r),0);
     const recRows=dayRecs.map(r=>{
       const sMin=r.serviceMin||0,lMin=r.ldcMin||0,eMin=r.eduMin||0;
-      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">P학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
+      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">P학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="window.deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
     }).join('');
     return`<div class="card" style="padding:0;overflow:hidden;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);"><div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:16px;font-weight:700;">${date.slice(5).replace('-','/')}</span><span style="font-size:13px;color:${dowColor};font-weight:600;">(${dow})</span></div><span style="font-size:15px;font-weight:700;color:var(--green);">${fmtTime(dayTotal)}</span></div><div style="padding:0 14px;">${recRows}</div></div>`
   }).join('');
@@ -843,7 +843,7 @@ function renderYearly(){
   const rows=sms.map(sm=>{
     const key=sm.year+'-'+pad(sm.month),s=sumMonth(cachedRecs,key);yt+=s.total;
     const isFuture=new Date(sm.year,sm.month-1,1)>now,pct=Math.min(Math.round(s.total/MONTHLY_MIN*100),100);
-    return`<div class="yearly-row" onclick="openMonthPopup('${key}')"><span style="font-size:13px;min-width:30px;">${sm.month}월</span><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><div style="height:100%;background:var(--green);border-radius:3px;width:${isFuture?0:pct}%"></div></div><span style="font-size:13px;font-weight:600;min-width:64px;text-align:right;">${isFuture?'-':fmtTime(s.total)}</span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`
+    return`<div class="yearly-row" onclick="window.openMonthPopup('${key}')"><span style="font-size:13px;min-width:30px;">${sm.month}월</span><div style="flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;"><div style="height:100%;background:var(--green);border-radius:3px;width:${isFuture?0:pct}%"></div></div><span style="font-size:13px;font-weight:600;min-width:64px;text-align:right;">${isFuture?'-':fmtTime(s.total)}</span><svg viewBox="0 0 24 24" style="width:14px;height:14px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg></div>`
   }).join('');
   document.getElementById('yearly-list').innerHTML=`<div class="card" style="margin-bottom:12px;"><div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:12px;color:var(--text2);">${sy}~${sy+1} 연도 누계</span><span style="font-size:17px;font-weight:600;">${fmtTime(yt)} / 600시간</span></div><div class="prog" style="margin-top:8px;"><div class="prog-fill" style="width:${Math.min(Math.round(yt/YEARLY_MIN*100),100)}%"></div></div></div><div class="card" style="padding:8px 14px;">${rows}</div>`;
 }
@@ -859,6 +859,7 @@ window.closeMonthPopup=function(e){if(!e||e.target===document.getElementById('mo
 // ── 관심자 ──
 let peopleFilter='all',currentPersonId=null,editPersonId=null;
 window.setFilter=function(btn){peopleFilter=btn.dataset.filter;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');renderPeople()};
+window.renderPeople=renderPeople;
 function renderPeople(){
   const q=(document.getElementById('people-search').value||'').toLowerCase(),sort=document.getElementById('people-sort').value;
   let filtered=cachedPeople.filter(p=>{if(peopleFilter!=='all'&&p.type!==peopleFilter)return false;if(q&&!p.name.toLowerCase().includes(q)&&!(p.address||'').toLowerCase().includes(q)&&!(p.dong||'').includes(q))return false;return true});
