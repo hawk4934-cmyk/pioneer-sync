@@ -356,6 +356,10 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
             <div style="font-size:12px;color:var(--text2);" id="settings-uid">-</div>
           </div>
         </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="window.forceRefresh()">
+          <span style="font-size:14px;">앱 새로고침 (최신버전 확인)</span>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
         <div class="setting-row" style="cursor:pointer;" onclick="window.openChangePw()">
           <span style="font-size:14px;">비밀번호 변경</span>
           <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
@@ -584,6 +588,21 @@ async function doSignup(){
 window.doSignup=doSignup;
 
 // ── 로그아웃 ──
+// ── 앱 새로고침 ──
+window.forceRefresh=async function(){
+  try{
+    if('caches' in window){
+      const keys=await caches.keys();
+      await Promise.all(keys.map(k=>caches.delete(k)));
+    }
+    if('serviceWorker' in navigator){
+      const regs=await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r=>r.unregister()));
+    }
+  }catch(e){console.log('refresh error:',e)}
+  location.reload(true);
+};
+
 window.doLogout=function(){
   if(!confirm('로그아웃 하시겠습니까?'))return;
   clearSession();
