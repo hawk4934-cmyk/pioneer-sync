@@ -76,8 +76,8 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 .card{background:var(--bg);border:.5px solid var(--border);border-radius:14px;padding:14px;margin-bottom:10px}
 .form-row{margin-bottom:13px}
 .form-row label{display:block;font-size:12px;color:var(--text2);margin-bottom:6px}
-.form-row input,.form-row select,.form-row textarea{width:100%;padding:10px 12px;font-size:15px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;appearance:none;-webkit-appearance:none}
-.form-row textarea{resize:none;height:80px;line-height:1.5}
+.form-row input,.form-row select,.form-row textarea{width:100%;padding:13px 14px;font-size:17px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;appearance:none;-webkit-appearance:none}
+.form-row textarea{resize:none;height:90px;line-height:1.6}
 .fg2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .btn-primary{width:100%;padding:14px;background:var(--primary);color:var(--bg);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:8px;font-family:inherit}
 .btn-sm{padding:6px 12px;font-size:12px;border:.5px solid var(--border2);border-radius:8px;background:none;cursor:pointer;color:var(--text1);font-family:inherit;display:flex;align-items:center;gap:4px}
@@ -125,7 +125,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 .cal-day.selected.has-rec::after{background:var(--bg)}
 .cal-day.sun{color:var(--red)}.cal-day.sat{color:var(--blue)}
 .time-input{display:flex;align-items:center;gap:6px}
-.time-input select{flex:1;padding:10px 8px;font-size:15px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;-webkit-appearance:none;text-align:center}
+.time-input select,.time-input input{flex:1;padding:13px 8px;font-size:18px;font-weight:600;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;-webkit-appearance:none;text-align:center}
 .time-sep{font-size:16px;font-weight:600;color:var(--text2);flex-shrink:0}
 .popup-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;align-items:flex-end}
 .popup-overlay.active{display:flex}
@@ -265,7 +265,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
 
     <!-- 기록 추가 -->
     <div id="page-add" class="page">
-      <div class="sec-title">봉사 기록 추가</div>
+      <div class="sec-title" id="add-page-title">봉사 기록 추가</div>
       <div class="cal-wrap">
         <div class="cal-header">
           <button class="cal-nav" onclick="window.calMove(-1)">‹</button>
@@ -281,18 +281,19 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
       </div>
       <div class="card">
         <div class="form-row"><label>봉사시간</label>
-          <div class="time-input"><select id="f-service-h"></select><span class="time-sep">시간</span><select id="f-service-m"></select><span class="time-sep">분</span></div>
+          <div class="time-input"><input type="number" id="f-service-h" min="0" max="23" inputmode="numeric" placeholder="0"><span class="time-sep">시간</span><input type="number" id="f-service-m" min="0" max="59" inputmode="numeric" placeholder="0"><span class="time-sep">분</span></div>
         </div>
         <div class="form-row"><label>LDC 시간</label>
-          <div class="time-input"><select id="f-ldc-h"></select><span class="time-sep">시간</span><select id="f-ldc-m"></select><span class="time-sep">분</span></div>
+          <div class="time-input"><input type="number" id="f-ldc-h" min="0" max="23" inputmode="numeric" placeholder="0"><span class="time-sep">시간</span><input type="number" id="f-ldc-m" min="0" max="59" inputmode="numeric" placeholder="0"><span class="time-sep">분</span></div>
         </div>
         <div class="form-row"><label>LDC 메모</label><input type="text" id="f-ldc-memo" placeholder="LDC 내용 메모"></div>
         <div class="form-row"><label>P학교 시간</label>
-          <div class="time-input"><select id="f-edu-h"></select><span class="time-sep">시간</span><select id="f-edu-m"></select><span class="time-sep">분</span></div>
+          <div class="time-input"><input type="number" id="f-edu-h" min="0" max="23" inputmode="numeric" placeholder="0"><span class="time-sep">시간</span><input type="number" id="f-edu-m" min="0" max="59" inputmode="numeric" placeholder="0"><span class="time-sep">분</span></div>
         </div>
         <div class="form-row"><label>P학교 메모</label><input type="text" id="f-edu-memo" placeholder="P학교 메모"></div>
         <div class="form-row"><label>메모</label><textarea id="f-memo" placeholder="기타 메모..."></textarea></div>
-        <button class="btn-primary" onclick="window.addRecord()">저장</button>
+        <button class="btn-primary" id="add-record-btn" onclick="window.addRecord()">저장</button>
+        <button class="btn-sm" id="cancel-edit-btn" onclick="window.cancelEditRecord()" style="display:none;width:100%;justify-content:center;margin-top:8px;">취소</button>
       </div>
     </div>
 
@@ -781,24 +782,59 @@ window.shareMonthReportFromPopup=function(){
   if(navigator.share){navigator.share({text})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!'))}
 };
 
-// ── 기록 추가 ──
-function buildTimeSelects(){
-  ['f-service-h','f-ldc-h','f-edu-h'].forEach(id=>{const sel=document.getElementById(id);sel.innerHTML='';for(let i=0;i<=23;i++){const o=document.createElement('option');o.value=i;o.textContent=i;sel.appendChild(o)}});
-  ['f-service-m','f-ldc-m','f-edu-m'].forEach(id=>{const sel=document.getElementById(id);sel.innerHTML='';for(let i=0;i<60;i+=5){const o=document.createElement('option');o.value=i;o.textContent=pad(i);sel.appendChild(o)}});
-}
+// ── 기록 추가/수정 ──
+let editingRecordId=null;
 function resetTimeInputs(){
-  ['f-service-h','f-service-m','f-ldc-h','f-ldc-m','f-edu-h','f-edu-m'].forEach(id=>document.getElementById(id).value=0);
+  ['f-service-h','f-service-m','f-ldc-h','f-ldc-m','f-edu-h','f-edu-m'].forEach(id=>document.getElementById(id).value='');
   ['f-ldc-memo','f-edu-memo','f-memo'].forEach(id=>document.getElementById(id).value='');
 }
 window.addRecord=async function(){
   if(!selectedDate){alert('날짜를 선택해주세요');return}
-  const sMin=toMin(+document.getElementById('f-service-h').value,+document.getElementById('f-service-m').value);
-  const lMin=toMin(+document.getElementById('f-ldc-h').value,+document.getElementById('f-ldc-m').value);
-  const eMin=toMin(+document.getElementById('f-edu-h').value,+document.getElementById('f-edu-m').value);
+  const sMin=toMin(+document.getElementById('f-service-h').value||0,+document.getElementById('f-service-m').value||0);
+  const lMin=toMin(+document.getElementById('f-ldc-h').value||0,+document.getElementById('f-ldc-m').value||0);
+  const eMin=toMin(+document.getElementById('f-edu-h').value||0,+document.getElementById('f-edu-m').value||0);
   if(sMin+lMin+eMin===0){alert('최소 하나의 시간을 입력해주세요');return}
-  await saveRec({date:selectedDate,serviceMin:sMin,ldcMin:lMin,eduMin:eMin,ldcMemo:document.getElementById('f-ldc-memo').value,eduMemo:document.getElementById('f-edu-memo').value,memo:document.getElementById('f-memo').value,createdAt:Date.now()});
-  resetTimeInputs();alert('저장되었습니다!');showPage('dashboard');
+  const data={date:selectedDate,serviceMin:sMin,ldcMin:lMin,eduMin:eMin,ldcMemo:document.getElementById('f-ldc-memo').value,eduMemo:document.getElementById('f-edu-memo').value,memo:document.getElementById('f-memo').value,createdAt:Date.now()};
+  if(editingRecordId){
+    data.id=editingRecordId;
+    await saveRec(data);
+    window.cancelEditRecord();
+    alert('수정되었습니다!');
+    showPage('records');
+  } else {
+    await saveRec(data);
+    resetTimeInputs();
+    alert('저장되었습니다!');
+    showPage('dashboard');
+  }
 };
+window.editRecord=function(id){
+  const r=cachedRecs.find(x=>x.id===id);
+  if(!r)return;
+  editingRecordId=id;
+  selectedDate=r.date;
+  document.getElementById('f-service-h').value=Math.floor((r.serviceMin||0)/60)||'';
+  document.getElementById('f-service-m').value=(r.serviceMin||0)%60||'';
+  document.getElementById('f-ldc-h').value=Math.floor((r.ldcMin||0)/60)||'';
+  document.getElementById('f-ldc-m').value=(r.ldcMin||0)%60||'';
+  document.getElementById('f-edu-h').value=Math.floor((r.eduMin||0)/60)||'';
+  document.getElementById('f-edu-m').value=(r.eduMin||0)%60||'';
+  document.getElementById('f-ldc-memo').value=r.ldcMemo||'';
+  document.getElementById('f-edu-memo').value=r.eduMemo||'';
+  document.getElementById('f-memo').value=r.memo||'';
+  document.getElementById('add-record-btn').textContent='수정 완료';
+  document.getElementById('cancel-edit-btn').style.display='flex';
+  document.getElementById('add-page-title').textContent='봉사 기록 수정';
+  showPage('add');
+};
+window.cancelEditRecord=function(){
+  editingRecordId=null;
+  resetTimeInputs();
+  document.getElementById('add-record-btn').textContent='저장';
+  document.getElementById('cancel-edit-btn').style.display='none';
+  document.getElementById('add-page-title').textContent='봉사 기록 추가';
+};
+
 
 // ── 월별 기록 ──
 function buildMonthSelect(){
@@ -830,7 +866,7 @@ window.renderRecords=function(){
     const dayTotal=dayRecs.reduce((a,r)=>a+recTotalMin(r),0);
     const recRows=dayRecs.map(r=>{
       const sMin=r.serviceMin||0,lMin=r.ldcMin||0,eMin=r.eduMin||0;
-      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">P학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="window.deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
+      return`<div style="padding:10px 0;border-top:.5px solid var(--border);"><div style="display:flex;justify-content:space-between;align-items:flex-start;"><div style="flex:1;">${sMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span style="font-size:11px;color:var(--text2);min-width:36px;">봉사</span><span style="font-size:14px;font-weight:600;">${fmtTime(sMin)}</span></div>`:''} ${lMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-ldc" style="min-width:36px;text-align:center;">LDC</span><span style="font-size:14px;font-weight:600;">${fmtTime(lMin)}</span>${r.ldcMemo?`<span style="font-size:12px;color:var(--text2);">${r.ldcMemo}</span>`:''}</div>`:''} ${eMin?`<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="badge b-edu" style="min-width:36px;text-align:center;">P학교</span><span style="font-size:14px;font-weight:600;">${fmtTime(eMin)}</span>${r.eduMemo?`<span style="font-size:12px;color:var(--text2);">${r.eduMemo}</span>`:''}</div>`:''} ${r.memo?`<div style="font-size:12px;color:var(--text3);margin-top:4px;font-style:italic;">${r.memo}</div>`:''}</div><button class="btn-icon" onclick="window.editRecord('${r.id}')"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button><button class="btn-icon" onclick="window.deleteRecord('${r.id}')"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg></button></div></div>`
     }).join('');
     return`<div class="card" style="padding:0;overflow:hidden;margin-bottom:10px;"><div style="display:flex;justify-content:space-between;align-items:center;padding:12px 14px;background:var(--bg2);"><div style="display:flex;align-items:baseline;gap:8px;"><span style="font-size:16px;font-weight:700;">${date.slice(5).replace('-','/')}</span><span style="font-size:13px;color:${dowColor};font-weight:600;">(${dow})</span></div><span style="font-size:15px;font-weight:700;color:var(--green);">${fmtTime(dayTotal)}</span></div><div style="padding:0 14px;">${recRows}</div></div>`
   }).join('');
@@ -924,7 +960,7 @@ window.deleteVisit=async function(personId,visitIdx){
 };
 
 // ── 초기화 ──
-buildTimeSelects();
+// (시간 입력은 직접입력 방식)
 initCal();
 
 // 자동 로그인 시도
