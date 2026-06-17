@@ -448,7 +448,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
     <div class="form-row"><label>날짜 *</label><input type="date" id="vf-date"></div>
     <div class="form-row"><label>방문 형식</label><select id="vf-type"><option value="재방">재방</option><option value="연구">연구</option></select></div>
     <div class="form-row"><label>내용 / 메모</label><textarea id="vf-content" placeholder="대화 내용, 나눈 자료, 반응 등..."></textarea></div>
-    <button class="btn-primary" onclick="window.saveVisit()">저장</button>
+    <button class="btn-primary" id="vf-save-btn" onclick="window.saveVisit()">저장</button>
   </div>
 </div>
 
@@ -943,7 +943,26 @@ window.showPersonDetail=function(id){
 function renderVisitHistory(p){
   const visits=(p.visits||[]).slice().reverse(),el=document.getElementById('visit-history');
   if(!visits.length){el.innerHTML='<div class="empty">방문 이력이 없습니다</div>';return}
-  el.innerHTML=`<div class="card">${visits.map((v,ri)=>{const realIdx=p.visits.length-1-ri;return`<div class="hist-item"><div style="display:flex;justify-content:space-between;align-items:center;"><div style="display:flex;align-items:center;gap:6px;"><span style="font-size:13px;font-weight:600;">${v.date}</span><span class="badge ${v.type==='연구'?'b-research':'b-visit'}">${v.type||'재방'}</span><span style="font-size:12px;color:var(--text3);">${realIdx+1}회차</span></div><button class="btn-icon" onclick="deleteVisit('${p.id}',${realIdx})"><svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></button></div>${v.content?`<div style="font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5;">${v.content}</div>`:''}</div>`}).join('')}</div>`
+  el.innerHTML=`<div class="card">${visits.map((v,ri)=>{
+    const realIdx=p.visits.length-1-ri;
+    return`<div class="hist-item">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <span style="font-size:13px;font-weight:600;">${v.date}</span>
+          <span class="badge ${v.type==='연구'?'b-research':'b-visit'}">${v.type||'재방'}</span>
+          <span style="font-size:12px;color:var(--text3);">${realIdx+1}회차</span>
+        </div>
+        <div style="display:flex;align-items:center;">
+          <button class="btn-icon" onclick="window.editVisit('${p.id}',${realIdx})">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button class="btn-icon" onclick="window.deleteVisit('${p.id}',${realIdx})">
+            <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+          </button>
+        </div>
+      </div>
+      ${v.content?`<div style="font-size:13px;color:var(--text2);margin-top:6px;line-height:1.5;">${v.content}</div>`:''}</div>`
+  }).join('')}</div>`
 }
 window.showPersonForm=function(id){
   editPersonId=id||null;hideDetails();document.getElementById('page-person-form').classList.add('active');
@@ -961,17 +980,43 @@ window.savePerson=async function(){
 window.editPerson=function(){window.showPersonForm(currentPersonId)};
 window.deletePerson=async function(){if(!confirm('이 관심자를 삭제할까요?'))return;await delPerson(currentPersonId);hideDetails();showPage('people')};
 window.backToPeople=function(){hideDetails();showPage('people')};
-window.showVisitForm=function(){
+
+let editingVisitIdx=null;
+window.showVisitForm=function(editIdx){
   hideDetails();document.getElementById('page-visit-form').classList.add('active');
   const p=cachedPeople.find(x=>x.id===currentPersonId);
-  document.getElementById('visit-form-title').textContent=(p&&p.type==='연구'?'연구':'재방')+' 기록 추가';
-  document.getElementById('vf-date').value=todayStr();document.getElementById('vf-content').value='';document.getElementById('vf-type').value=p?p.type:'재방';
+  if(editIdx!==undefined){
+    editingVisitIdx=editIdx;
+    const v=p.visits[editIdx];
+    document.getElementById('vf-date').value=v.date;
+    document.getElementById('vf-type').value=v.type||'재방';
+    document.getElementById('vf-content').value=v.content||'';
+    document.getElementById('visit-form-title').textContent='방문 기록 수정';
+    document.getElementById('vf-save-btn').textContent='수정 완료';
+  } else {
+    editingVisitIdx=null;
+    document.getElementById('vf-date').value=todayStr();
+    document.getElementById('vf-content').value='';
+    document.getElementById('vf-type').value=p?p.type:'재방';
+    document.getElementById('visit-form-title').textContent=(p&&p.type==='연구'?'연구':'재방')+' 기록 추가';
+    document.getElementById('vf-save-btn').textContent='저장';
+  }
+};
+window.editVisit=function(personId,visitIdx){
+  currentPersonId=personId;
+  window.showVisitForm(visitIdx);
 };
 window.cancelVisitForm=function(){hideDetails();window.showPersonDetail(currentPersonId)};
 window.saveVisit=async function(){
   const date=document.getElementById('vf-date').value;if(!date){alert('날짜를 선택해주세요');return}
   const p=cachedPeople.find(x=>x.id===currentPersonId);if(!p)return;
-  const visits=[...(p.visits||[]),{date,type:document.getElementById('vf-type').value,content:document.getElementById('vf-content').value}];
+  const visits=[...(p.visits||[])];
+  const visitData={date,type:document.getElementById('vf-type').value,content:document.getElementById('vf-content').value};
+  if(editingVisitIdx!==null){
+    visits[editingVisitIdx]=visitData;
+  } else {
+    visits.push(visitData);
+  }
   visits.sort((a,b)=>a.date.localeCompare(b.date));
   await savePersonData({...p,visits});hideDetails();window.showPersonDetail(currentPersonId);
 };
