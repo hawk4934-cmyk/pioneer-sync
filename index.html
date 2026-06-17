@@ -249,7 +249,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
       </div>
       <button class="btn-share" onclick="window.shareMonthReport()">
         <svg style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        당월 보고서 공유
+        봉사보고
       </button>
       <div class="sec-title" style="margin-top:16px;">봉사연도 누계 (9월~8월)</div>
       <div class="metric-grid">
@@ -793,7 +793,11 @@ function buildReportText(monthKey){
   return text.trim();
 }
 window.shareMonthReport=function(){
-  const now=new Date(),key=now.getFullYear()+'-'+pad(now.getMonth()+1),text=buildReportText(key);
+  const now=new Date();
+  // 전월 기준 (익월초에 전달 보고)
+  const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
+  const key=prev.getFullYear()+'-'+pad(prev.getMonth()+1);
+  const text=buildReportText(key);
   if(navigator.share){navigator.share({text})}else if(navigator.clipboard){navigator.clipboard.writeText(text).then(()=>alert('클립보드에 복사됐어요!\n카카오톡이나 문자에 붙여넣기 하세요.'))}
 };
 window.shareMonthReportFromPopup=function(){
