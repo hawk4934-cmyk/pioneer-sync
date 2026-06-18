@@ -236,7 +236,7 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
       <div class="sec-title">당월 현황</div>
       <div class="metric-grid">
         <div class="metric full">
-          <div class="label">당월 총 봉사시간 (목표 50시간)</div>
+          <div class="label" id="d-goal-label">당월 총 봉사시간 (목표 50시간)</div>
           <div class="val" id="d-total">0시간</div>
           <div class="prog"><div class="prog-fill" id="d-bar" style="width:0%"></div></div>
           <div class="sub" id="d-remain"></div>
@@ -356,10 +356,6 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
             <div style="font-size:12px;color:var(--text2);" id="settings-uid">-</div>
           </div>
         </div>
-        <div class="setting-row" style="cursor:pointer;" onclick="window.forceRefresh()">
-          <span style="font-size:14px;">앱 새로고침 (최신버전 확인)</span>
-          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        </div>
         <div class="setting-row" style="cursor:pointer;" onclick="window.openChangePw()">
           <span style="font-size:14px;">비밀번호 변경</span>
           <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="9 18 15 12 9 6"/></svg>
@@ -368,6 +364,32 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
           <span style="font-size:14px;color:var(--red);">로그아웃</span>
           <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;flex-shrink:0"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="window.forceRefresh()">
+          <span style="font-size:14px;">앱 새로고침 (최신버전 확인)</span>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        </div>
+      </div>
+      <div class="card" style="margin-top:4px;">
+        <div style="font-size:13px;font-weight:600;margin-bottom:14px;">봉사 신분 및 목표시간</div>
+        <div class="form-row">
+          <select id="pioneer-type" onchange="window.onPioneerTypeChange()" style="font-size:16px;padding:12px;width:100%;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;-webkit-appearance:none;">
+            <option value="regular">정규 파이오니아 (월 50시간)</option>
+            <option value="special">특별 파이오니아 (기본 90시간)</option>
+            <option value="aux">보조 파이오니아 (기본 30시간)</option>
+            <option value="custom">직접 설정</option>
+          </select>
+        </div>
+        <div id="adjust-goal-row" style="display:none;">
+          <div class="form-row">
+            <label id="adjust-label">월 목표시간 (시간)</label>
+            <input type="number" id="custom-monthly" min="1" max="300" inputmode="numeric" style="width:100%;padding:12px;font-size:16px;border:.5px solid var(--border2);border-radius:10px;background:var(--bg2);color:var(--text1);font-family:inherit;">
+          </div>
+        </div>
+        <div id="goal-summary" style="background:var(--bg2);border-radius:10px;padding:12px;margin-top:4px;font-size:13px;color:var(--text2);line-height:2;">
+          <div>월 목표: <strong id="s-monthly" style="color:var(--text1);">50시간</strong></div>
+          <div id="s-yearly-row">연 목표: <strong id="s-yearly" style="color:var(--text1);">600시간</strong></div>
+        </div>
+        <button onclick="window.saveGoalSettings()" style="width:100%;padding:14px;background:var(--primary);color:var(--bg);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;margin-top:12px;font-family:inherit;">저장</button>
       </div>
       <div style="text-align:center;margin-top:20px;">
         <div style="font-size:11px;color:var(--text3);" id="ver-label">파이오니아 봉사기록 v2.0</div>
@@ -484,7 +506,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const MONTHLY_MIN=50*60, YEARLY_MIN=600*60, MASTER_PW='3957';
+const MASTER_PW='3957';
+const PIONEER_PRESETS={
+  regular:{monthly:50, label:'정규 파이오니아', adjustable:false, showYearly:true},
+  special:{monthly:90, label:'특별 파이오니아', adjustable:true,  showYearly:true},
+  aux:    {monthly:30, label:'보조 파이오니아', adjustable:true,  showYearly:false},
+  custom: {monthly:50, label:'직접 설정',       adjustable:true,  showYearly:true}
+};
+function loadGoalSettings(){try{return JSON.parse(localStorage.getItem('p_goal')||'null')}catch(e){return null}}
+function getGoals(){
+  const s=loadGoalSettings();
+  if(!s)return{monthly:50*60,yearly:600*60,showYearly:true};
+  const preset=PIONEER_PRESETS[s.type]||PIONEER_PRESETS.regular;
+  return{monthly:s.monthly*60,yearly:s.monthly*12*60,showYearly:preset.showYearly};
+}
+let MONTHLY_MIN=getGoals().monthly;
+let YEARLY_MIN=getGoals().yearly;
+function refreshGoals(){
+  const g=getGoals();
+  MONTHLY_MIN=g.monthly;YEARLY_MIN=g.yearly;
+  const ys=document.getElementById('yearly-section');
+  if(ys)ys.style.display=g.showYearly?'':'none';
+}
 let currentUid=null, currentUserName='', cachedRecs=[], cachedPeople=[];
 let popupMonthKey=null, masterTapCount=0, masterTapTimer=null;
 let unsubRecs=null, unsubPeople=null;
@@ -588,6 +631,63 @@ async function doSignup(){
 window.doSignup=doSignup;
 
 // ── 로그아웃 ──
+// ── 설정 ──
+window.onPioneerTypeChange=function(){
+  const type=document.getElementById('pioneer-type').value;
+  const preset=PIONEER_PRESETS[type];
+  document.getElementById('adjust-goal-row').style.display=preset.adjustable?'block':'none';
+  if(preset.adjustable){
+    document.getElementById('custom-monthly').value='';
+    document.getElementById('custom-monthly').placeholder=
+      type==='special'?'예) 90 (시간 직접 입력)':type==='aux'?'예) 30 (시간 직접 입력)':'예) 50';
+    document.getElementById('adjust-label').textContent=
+      type==='aux'?'월 목표시간 (보조는 매월 독립 목표)':'월 목표시간';
+  }
+  window.updateGoalSummary();
+};
+window.updateGoalSummary=function(){
+  const type=document.getElementById('pioneer-type').value;
+  const preset=PIONEER_PRESETS[type];
+  const inputVal=parseInt(document.getElementById('custom-monthly').value);
+  const monthly=preset.adjustable?(inputVal||null):preset.monthly;
+  document.getElementById('s-monthly').textContent=monthly?monthly+'시간':'입력 후 확인';
+  if(preset.showYearly){
+    document.getElementById('s-yearly-row').style.display='';
+    document.getElementById('s-yearly').textContent=monthly?(monthly*12)+'시간':'입력 후 확인';
+  }else{
+    document.getElementById('s-yearly-row').style.display='none';
+  }
+};
+window.loadSettingsPage=function(){
+  const s=loadGoalSettings()||{type:'regular',monthly:50};
+  document.getElementById('pioneer-type').value=s.type||'regular';
+  const preset=PIONEER_PRESETS[s.type||'regular'];
+  document.getElementById('custom-monthly').value=preset.adjustable?(s.monthly||''):'';
+  window.onPioneerTypeChange();
+};
+window.saveGoalSettings=function(){
+  const type=document.getElementById('pioneer-type').value;
+  const preset=PIONEER_PRESETS[type];
+  let monthly;
+  if(preset.adjustable){
+    monthly=parseInt(document.getElementById('custom-monthly').value);
+    if(!monthly){alert('월 목표시간을 입력해주세요');return}
+  }else{
+    monthly=preset.monthly;
+  }
+  localStorage.setItem('p_goal',JSON.stringify({type,monthly}));
+  refreshGoals();
+  renderDashboard();
+  const yearlyMsg=preset.showYearly?' / 연 목표: '+(monthly*12)+'시간':'';
+  alert('설정이 저장됐습니다!
+신분: '+preset.label+'
+월 목표: '+monthly+'시간'+yearlyMsg);
+  showPage('dashboard');
+};
+document.addEventListener('input',function(e){
+  if(e.target.id==='custom-monthly')window.updateGoalSummary();
+});
+
 // ── 앱 새로고침 ──
 window.forceRefresh=async function(){
   try{
@@ -740,6 +840,7 @@ function showPage(id){
   if(id==='records')renderRecords();
   if(id==='yearly')renderYearly();
   if(id==='people')renderPeople();
+  if(id==='settings')window.loadSettingsPage();
 }
 window.showPage=showPage;
 function hideDetails(){document.querySelectorAll('.detail-page').forEach(p=>p.classList.remove('active'))}
@@ -748,6 +849,12 @@ function hideDetails(){document.querySelectorAll('.detail-page').forEach(p=>p.cl
 function renderDashboard(){
   const now=new Date(),curKey=now.getFullYear()+'-'+pad(now.getMonth()+1);
   const ms=sumMonth(cachedRecs,curKey),pct=Math.min(Math.round(ms.total/MONTHLY_MIN*100),100),diff=ms.total-MONTHLY_MIN;
+  // 목표 라벨 업데이트
+  const gs=loadGoalSettings()||{type:'regular',monthly:50};
+  const gp=PIONEER_PRESETS[gs.type]||PIONEER_PRESETS.regular;
+  const monthlyH=gp.adjustable?gs.monthly:gp.monthly;
+  const goalLabel=document.getElementById('d-goal-label');
+  if(goalLabel)goalLabel.textContent='당월 총 봉사시간 (목표 '+monthlyH+'시간)';
   document.getElementById('d-total').textContent=fmtTime(ms.total);
   document.getElementById('d-bar').style.width=pct+'%';
   document.getElementById('d-service').textContent=fmtShort(ms.service);
@@ -1028,6 +1135,8 @@ window.deleteVisit=async function(personId,visitIdx){
 };
 
 // ── 초기화 ──
+// 저장된 목표 적용
+(function(){const g=getGoals();MONTHLY_MIN=g.monthly;YEARLY_MIN=g.yearly;const ys=document.getElementById('yearly-section');if(ys)ys.style.display=g.showYearly?'':'none';})();
 // (시간 입력은 직접입력 방식)
 initCal();
 
