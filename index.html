@@ -692,9 +692,7 @@ window.saveGoalSettings=function(){
   refreshGoals();
   renderDashboard();
   const yearlyMsg=preset.showYearly?' / 연 목표: '+(monthly*12)+'시간':'';
-  alert('설정이 저장됐습니다!
-신분: '+preset.label+'
-월 목표: '+monthly+'시간'+yearlyMsg);
+  alert('설정이 저장됐습니다! 신분: '+preset.label+' / 월 목표: '+monthly+'시간'+yearlyMsg);
   showPage('dashboard');
 };
 document.addEventListener('input',function(e){
