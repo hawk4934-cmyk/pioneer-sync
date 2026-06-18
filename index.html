@@ -631,6 +631,19 @@ async function doSignup(){
 window.doSignup=doSignup;
 
 // ── 로그아웃 ──
+window.doLogout=function(){
+  if(!confirm('로그아웃 하시겠습니까?'))return;
+  clearSession();
+  if(unsubRecs)unsubRecs();
+  if(unsubPeople)unsubPeople();
+  currentUid=null;cachedRecs=[];cachedPeople=[];
+  document.getElementById('auth-screen').classList.remove('hidden');
+  document.getElementById('login-id').value='';
+  document.getElementById('login-pw').value='';
+  document.getElementById('login-error').textContent='';
+  showPage('dashboard');
+};
+
 // ── 설정 ──
 window.onPioneerTypeChange=function(){
   const type=document.getElementById('pioneer-type').value;
