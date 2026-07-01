@@ -859,7 +859,11 @@ function hideDetails(){document.querySelectorAll('.detail-page').forEach(p=>p.cl
 // ── 대시보드 ──
 function renderDashboard(){
   const now=new Date(),curKey=now.getFullYear()+'-'+pad(now.getMonth()+1);
-  const ms=sumMonth(cachedRecs,curKey),pct=Math.min(Math.round(ms.total/MONTHLY_MIN*100),100),diff=ms.total-MONTHLY_MIN;
+  const ms=sumMonth(cachedRecs,curKey);
+  // 이월분 반영 (전월 보고 후 잔여분)
+  const carryMin=getCarryForMonth(curKey);
+  if(carryMin>0){ms.service=(ms.service||0)+carryMin;ms.total=(ms.total||0)+carryMin;}
+  const pct=Math.min(Math.round(ms.total/MONTHLY_MIN*100),100),diff=ms.total-MONTHLY_MIN;
   // 목표 라벨 업데이트
   const gs=loadGoalSettings()||{type:'regular',monthly:50};
   const gp=PIONEER_PRESETS[gs.type]||PIONEER_PRESETS.regular;
@@ -894,25 +898,55 @@ function countResearchTotal(monthKey){
   // 연구 형식인 관심자는 첫방문부터 연구건수로 카운트
   return cachedPeople.filter(p=>p.type==='연구').length;
 }
+// ── 이월 관리 ──
+function loadCarryOver(){
+  try{return JSON.parse(localStorage.getItem('p_carry')||'{}')}catch(e){return{}}}
+function saveCarryOver(d){localStorage.setItem('p_carry',JSON.stringify(d))}
+function getCarryForMonth(monthKey){
+  const carry=loadCarryOver();
+  return carry[monthKey]||0;
+}
+
 function buildReportText(monthKey){
   const ms=sumMonth(cachedRecs,monthKey);
   const y=monthKey.split('-')[0],m=parseInt(monthKey.split('-')[1]);
   const rc=cachedPeople.filter(p=>p.type==='연구').length;
-  const consideration=ms.ldc+ms.edu;
+
+  // 이월분 (전전월 잔여 → 해당월에 이월된 분)
+  const carry=loadCarryOver();
+  const prevCarryMin=carry[monthKey]||0;
+
+  // 시간단위만 보고, 분 잔여는 다음달 이월
+  const totalServiceMin=(ms.service||0)+prevCarryMin;
+  const serviceHours=Math.floor(totalServiceMin/60);
+  const serviceRemain=totalServiceMin%60;
+  const ldcHours=Math.floor((ms.ldc||0)/60);
+  const ldcRemain=(ms.ldc||0)%60;
+  const eduHours=Math.floor((ms.edu||0)/60);
+  const eduRemain=(ms.edu||0)%60;
+  const totalRemain=serviceRemain+ldcRemain+eduRemain;
+
+  // 다음달로 이월 저장
+  const nextDate=new Date(parseInt(y),parseInt(m)-1+1,1);
+  const nextKey=nextDate.getFullYear()+'-'+pad(nextDate.getMonth()+1);
+  carry[nextKey]=(carry[nextKey]||0)+totalRemain;
+  saveCarryOver(carry);
+
+  const considerationH=ldcHours+eduHours;
   var R='\n';
   var text='[봉사보고] '+y+'년 '+m+'월'+R;
-  text+='총 봉사시간: '+fmtTime(ms.service)+R;
-  if(consideration>0){
-    text+='총 고려시간: '+fmtTime(consideration)+R;
-    if(ms.ldc)text+='  LDC: '+fmtTime(ms.ldc)+R;
-    if(ms.edu)text+='  P학교: '+fmtTime(ms.edu)+R;
+  text+='총 봉사시간: '+serviceHours+'시간'+R;
+  if(considerationH>0){
+    text+='총 고려시간: '+considerationH+'시간'+R;
+    if(ldcHours)text+='  LDC: '+ldcHours+'시간'+R;
+    if(eduHours)text+='  P학교: '+eduHours+'시간'+R;
   }
   if(rc)text+='연구: '+rc+'건'+R;
+  if(totalRemain>0)text+='('+totalRemain+'분 → '+nextKey.replace('-','년 ')+'월로 이월)';
   return text.trim();
 }
 window.shareMonthReport=function(){
   const now=new Date();
-  // 전월 기준 (익월초에 전달 보고)
   const prev=new Date(now.getFullYear(),now.getMonth()-1,1);
   const key=prev.getFullYear()+'-'+pad(prev.getMonth()+1);
   const text=buildReportText(key);
