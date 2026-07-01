@@ -368,6 +368,10 @@ html,body{height:100%;background:var(--bg);color:var(--text1);font-family:-apple
           <span style="font-size:14px;">앱 새로고침 (최신버전 확인)</span>
           <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         </div>
+        <div class="setting-row" style="cursor:pointer;" onclick="window.resetCarryOver()">
+          <span style="font-size:14px;color:var(--red);">이월 데이터 초기화</span>
+          <svg viewBox="0 0 24 24" style="width:16px;height:16px;stroke:var(--red);fill:none;stroke-width:2;flex-shrink:0"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+        </div>
       </div>
       <div class="card" style="margin-top:4px;">
         <div style="font-size:13px;font-weight:600;margin-bottom:14px;">봉사 신분 및 목표시간</div>
@@ -698,6 +702,14 @@ window.saveGoalSettings=function(){
 document.addEventListener('input',function(e){
   if(e.target.id==='custom-monthly')window.updateGoalSummary();
 });
+
+// ── 이월 초기화 ──
+window.resetCarryOver=function(){
+  if(!confirm('이월 데이터를 초기화할까요?\n잘못 누적된 이월 분이 있을 때 사용하세요.'))return;
+  localStorage.removeItem('p_carry');
+  alert('이월 데이터가 초기화됐어요!');
+  renderDashboard();
+};
 
 // ── 앱 새로고침 ──
 window.forceRefresh=async function(){
